@@ -1,0 +1,290 @@
+\documentclass[color]{tumphthesis}
+
+\usepackage{duckuments}
+\usepackage{epigraph}
+\usepackage{lipsum}
+\usepackage{dsfont}
+\usepackage{listings}
+
+% %%% --- PACKAGES TO ADD --- %%%
+% \usepackage{stmaryrd}
+% \let\stmaryrdLightning\lightning
+% \usepackage[english]{babel}
+% \usepackage{listings}
+% \usepackage{tikz}
+% \usetikzlibrary{decorations.pathreplacing,calligraphy}
+% \usepackage{gensymb}
+% \usepackage{caption}
+% \usepackage[normalem]{ulem}
+% \usepackage{siunitx}  
+% \usepackage{enumitem}
+% \usepackage[list=true, font=small, labelfont=bf, labelformat=brace, position=bottom]{subcaption}
+% \usepackage{mathtools}
+% \DeclarePairedDelimiter\bra{\langle}{\rvert}
+% \DeclarePairedDelimiter\ket{\lvert}{\rangle}
+% \DeclarePairedDelimiterX\braket[2]{\langle}{\rangle}{#1 \delimsize\vert #2}
+% \usepackage{mdframed}
+
+% \usepackage[autostyle]{csquotes}
+
+% %%% --- SETUP & FORMATTING --- %%%
+% \numberwithin{equation}{section}
+% \setlist[enumerate,1]{label=\roman*)}
+% \sisetup{locale = DE}
+% \mdfdefinestyle{box}{}
+
+% \DeclarePairedDelimiter{\norm}{\lVert}{\rVert}
+
+% \newcommand{\dd}{\ \mathrm{d}}
+% %%% --- CODE BLOCK STYLING (listings) --- %%%
+% % Note: xcolor is already loaded by the class, so we just define the colors
+% \definecolor{codegreen}{rgb}{0,0.6,0}
+% \definecolor{codegray}{rgb}{0.5,0.5,0.5}
+% \definecolor{codepurple}{rgb}{0.58,0,0.82}
+% \definecolor{backcolour}{rgb}{0.97,0.97,0.97}
+
+% \lstdefinestyle{mystyle}{
+%     backgroundcolor=\color{backcolour},   
+%     commentstyle=\color{codegray},
+%     keywordstyle=\color{codepurple},
+%     numberstyle=\tiny\color{codegray},
+%     stringstyle=\color{codegreen},
+%     basicstyle=\ttfamily\footnotesize,
+%     breakatwhitespace=false,         
+%     breaklines=true,                
+%     captionpos=b,                    
+%     keepspaces=true,                 
+%     numbers=left,                    
+%     numbersep=5pt,                  
+%     showspaces=false,                
+%     showstringspaces=false,
+%     showtabs=false,                  
+%     tabsize=2
+% }
+% \lstset{style=mystyle}
+
+% %%% --- CUSTOM MATH COMMANDS --- %%%
+% \newcommand{\olsi}[1]{\,\overline{\!{#1}}} % overline short italic
+
+% \newcommand{\tr}{\mathrm{tr}}
+% \newcommand{\trr}[1]{\mathrm{tr[#1]}}
+% \newcommand{\Tr}{\mathrm{Tr}}
+
+% \newcommand{\m}{\mathcal}
+% \newcommand{\id}{\mathrm{id}}
+% \newcommand{\B}{\mathcal B}
+% \newcommand{\R}{\mathbb{R}}
+% \renewcommand{\L}{\mathcal{L}}
+% \newcommand{\N}{\mathbb{N}}
+
+% \newcommand{\Z}{\mathbb{Z}}
+% \newcommand{\C}{\mathbb{C}}
+% \newcommand{\End}{\text{End}}
+% \newcommand{\Q}{\mathbb{Q}}
+% \newcommand{\mi}{^{-1}}
+% \newcommand{\de}{Delta}
+% \renewcommand{\P}{\mathcal{P}}
+% \newcommand{\PM}{\mathbb{P}}
+% \newcommand{\hi}{\mathcal{H}}
+% \newcommand{\e}{\mathrm{e}}
+% \renewcommand{\Im}{\mathrm{Im}}
+% \newcommand{\Ker}{\mathrm{Ker}}
+% \renewcommand{\dim}{\mathrm{dim}}
+% \newcommand{\pr}[1]{\ket{#1}\bra{#1}}
+% \newcommand{\artanh}{\text{artanh}}
+% \newcommand{\1}{\mathds{1}}
+% \newcommand{\rk}{\mathrm{rk}}
+% \newcommand{\Hom}{\mathrm{Hom}}
+% \newcommand{\supp}{\mathrm{supp}}
+% \newcommand{\inter}{\mathrm{int}}
+% \newcommand{\sep}{\mathrm{SEP}}
+
+%%% --- PACKAGES TO ADD --- %%%
+\usepackage{stmaryrd}
+\let\stmaryrdLightning\lightning
+\usepackage[english]{babel}
+\usepackage{listings}
+\usepackage{tikz}
+\usetikzlibrary{decorations.pathreplacing,calligraphy}
+\usepackage{gensymb}
+\usepackage{caption}
+\usepackage[normalem]{ulem}
+\usepackage{siunitx}  
+\usepackage{enumitem}
+\usepackage[list=true, font=small, labelfont=bf, labelformat=brace, position=bottom]{subcaption}
+\usepackage{mathtools}
+\usepackage{mdframed}
+\usepackage[autostyle]{csquotes}
+%%% --- SETUP & FORMATTING --- %%%
+\numberwithin{equation}{section}
+\setlist[enumerate,1]{label=\roman*)}
+\sisetup{locale = DE}
+\mdfdefinestyle{box}{}
+\renewcommand{\abstractname}{Danksagung}
+
+%%% --- CODE BLOCK STYLING (listings) --- %%%
+% Note: xcolor is already loaded by the class, so we just define the colors
+\definecolor{codegreen}{rgb}{0,0.6,0}
+\definecolor{codegray}{rgb}{0.5,0.5,0.5}
+\definecolor{codepurple}{rgb}{0.58,0,0.82}
+\definecolor{backcolour}{rgb}{0.97,0.97,0.97}
+
+\lstdefinestyle{mystyle}{
+    backgroundcolor=\color{backcolour},   
+    commentstyle=\color{codegray},
+    keywordstyle=\color{codepurple},
+    numberstyle=\tiny\color{codegray},
+    stringstyle=\color{codegreen},
+    basicstyle=\ttfamily\footnotesize,
+    breakatwhitespace=false,         
+    breaklines=true,                
+    captionpos=b,                    
+    keepspaces=true,                 
+    numbers=left,                    
+    numbersep=5pt,                  
+    showspaces=false,                
+    showstringspaces=false,
+    showtabs=false,                  
+    tabsize=2
+}
+\lstset{style=mystyle}
+
+%%% --- CUSTOM MATH COMMANDS --- %%%
+\newcommand{\olsi}[1]{\,\overline{\!{#1}}} % overline short italic
+\DeclarePairedDelimiter{\norm}{\lVert}{\rVert}
+\DeclarePairedDelimiter\bra{\langle}{\rvert}
+\DeclarePairedDelimiter\ket{\lvert}{\rangle}
+\DeclarePairedDelimiterX\braket[2]{\langle}{\rangle}{#1 \delimsize\vert #2}
+
+\newcommand{\dd}{\ \mathrm{d}}
+\newcommand{\tr}{\mathrm{tr}}
+\newcommand{\trr}[1]{\mathrm{tr[#1]}}
+\newcommand{\Tr}{\mathrm{Tr}}
+\newcommand{\SP}{\mathrm{S}\mathbb{P}}
+\newcommand{\m}{\mathcal}
+\newcommand{\id}{\mathrm{id}}
+\newcommand{\B}{\mathcal B}
+\newcommand{\R}{\mathbb{R}}
+\renewcommand{\L}{\mathcal{L}}
+\newcommand{\N}{\mathbb{N}}
+\newcommand{\mQ}{\mathcal{Q}}
+\newcommand{\Z}{\mathbb{Z}}
+\newcommand{\C}{\mathbb{C}}
+\newcommand{\End}{\text{End}}
+\newcommand{\Q}{\mathbb{Q}}
+\newcommand{\mi}{^{-1}}
+\newcommand{\de}{\Delta}
+\renewcommand{\P}{\mathcal{P}}
+\newcommand{\PM}{\mathbb{P}}
+\newcommand{\hi}{\mathcal{H}}
+\newcommand{\e}{\mathrm{e}}
+\renewcommand{\Im}{\mathrm{Im}}
+\newcommand{\Ker}{\mathrm{Ker}}
+\renewcommand{\dim}{\mathrm{dim}}
+\newcommand{\pr}[1]{\ket{#1}\bra{#1}}
+\newcommand{\artanh}{\text{artanh}}
+\newcommand{\1}{\mathds{1}}
+\newcommand{\rk}{\mathrm{rk}}
+\newcommand{\Hom}{\mathrm{Hom}}
+\newcommand{\supp}{\mathrm{supp}}
+\newcommand{\inter}{\mathrm{int}}
+\newcommand{\sep}{\mathrm{SEP}}
+\newcommand{\finedef}{\hfill$\lrcorner$}
+
+
+\usepackage{xcolor}
+\usepackage{soul}
+
+\thesistitle
+{Entanglement-Breaking Through Iterated Quantum Operations}
+
+\thesisauthor{Malte Zehnpfennig}{Malte Zehnpfennig}
+\thesisdate{2021}{8}{30}
+\matriculationnumber{03789321}
+\email{malte.zehnpfennig@gmx.de}
+\supervisor{Prof. Dr. Michael Wolf}
+\examiner{Prof. Dr. }
+\date{\today}
+
+
+\addbibresource{library.bib}
+
+\usepackage[withpage, nohyperlinks]{acronym}
+
+\begin{document}
+
+\maketitle
+
+% \abstractpage
+% \input{chapters/abstract}
+\clearpage
+\chapter*{Abstract}
+\addcontentsline{toc}{chapter}{\protect Abstract}
+\input{chapters/abstract}
+
+\acknowledgments
+\input{chapters/acknowledgements}
+
+\tableofcontents
+
+% \addcontentsline{toc}{chapter}{\protect List of Figures}
+% \listoffigures
+
+% \addcontentsline{toc}{chapter}{\protect List of Tables}
+% \listoftables
+
+\begin{comment}
+\clearpage
+\chapter*{List of Abbreviations}
+\addcontentsline{toc}{chapter}{\protect List of Abbreviations}
+
+\begin{acronym}[SIC-POVM] % Ordered by first-use page for ascending page tracking.
+    \acro{AEB}{Asymptotically Entanglement-Breaking}
+    \acro{AES}{Asymptotically Entanglement-Saving}
+    \acro{CP}{Completely Positive}
+    \acro{CPTP}{Completely Positive Trace-Preserving}
+    \acro{EB}{Entanglement-Breaking}
+    \acro{EEB}{Eventually Entanglement-Breaking}
+    \acro{HS}{Hilbert--Schmidt}
+    \acro{LMI}{Linear Matrix Inequality}
+    \acro{NP}{Nondeterministic Polynomial Time}
+    \acro{POVM}{Positive Operator-Valued Measure}
+    \acro{PPT}{Positive Partial Transpose}
+    \acro{PVM}{Projection-Valued Measure}
+    \acro{QDS}{Quantum Dynamical Semigroup}
+    \acro{SDP}{Semidefinite Programming}
+    \acro{SIC}{Symmetric Informationally Complete}
+    \acro{SIC-POVM}{Symmetric Informationally Complete Positive Operator-Valued Measure}
+    \acro{SN}{Schmidt Number}
+    % \acro{TP}{Trace-Preserving}
+    % \acro{BFGS}{Broyden--Fletcher--Goldfarb--Shanno}
+    % \acro{COO}{Coordinate}
+    % \acro{CVXPY}{Convex Optimization in Python}
+    % \acro{ES}{Entanglement-Saving}
+    % \acro{MOSEK}{MOSEK Optimization Software}
+    % \acro{PT}{Partial Transpose}
+    % \acro{QR}{QR Decomposition}
+    % \acro{SCS}{Splitting Conic Solver}
+    % \acro{SEP}{Separable}
+    % \acro{SR}{Schmidt Rank}
+\end{acronym}
+\end{comment}
+
+\mainmatter\setcounter{page}{1}
+\include{chapters/1_introduction}
+\include{chapters/2_general_preliminaries}
+\include{chapters/3_entanglement}
+\include{chapters/4_preliminaries_channels}
+\include{chapters/5_entanglement-breaking}
+\include{chapters/6_own_results}
+\include{chapters/7_conclusion}
+
+
+\appendix
+
+\include{chapters/app1}
+
+\addcontentsline{toc}{chapter}{\protect Bibliography}
+\printbibliography
+
+\end{document}
