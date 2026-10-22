@@ -1,0 +1,359 @@
+\chapter{Preliminaries}
+\label{chap:2_general_preliminaries}
+
+\section{Mathematics}\label{sec:math}
+
+To start studying quantum channels, some fundamental concepts from analysis and linear algebra are needed and will be briefly presented in this section. As a reference, see for example \cite{Axler2024} for linear algebra or \cite{Abbott2015} for undergraduate analysis. The focus is on finite-dimensional spaces.
+
+% \textcolor{green}{Before delving into the physical framework of quantum channels, we first establish the underlying mathematical formalism. This section outlines the essential concepts from linear algebra, functional analysis, and convexity required for the remainder of this thesis. For comprehensive treatments of these topics, we refer the reader to \cite{Axler2024} for linear algebra and \cite{Abbott2015} for analysis.}
+
+% \textcolor{green}{Crucially, throughout this work, we restrict our focus exclusively to finite-dimensional complex vector spaces. This restriction significantly simplifies the topological considerations—for instance, ensuring that all linear operators are continuous and all norms are equivalent—while remaining perfectly sufficient for describing discrete-variable quantum information. We will adhere to the standard Dirac bra-ket notation to represent vectors and their duals. Furthermore, we adopt standard roman typography for operators and maps to distinguish them from variables, denoting the identity map as $\id$ (or the identity matrix as $\1$) and the trace as $\tr$.}
+
+% \textcolor{green}{The following subsections will build our mathematical toolkit layer by layer. We begin by reviewing fundamental linear algebraic structures, including inner product spaces, operator bases, orthogonal projections, and fundamental subspace relations such as the orthogonal complement of kernels and ranges. Finally, we introduce the necessary analytical and geometric concepts—such as compactness, Lipschitz continuity, fixed-point theorems, and the structure of convex sets—which are indispensable for characterizing the state spaces of quantum systems and their evolution.}
+
+\subsection{Linear Algebra}
+A vector space over a field $\mathbb F$ is a set $V$ together with an addition $+:V \times V \rightarrow V$ and a scalar multiplication $\cdot : \mathbb F \times V \rightarrow V$ fulfilling the following properties: The addition operation $+$ needs to be commutative and associative, as well as having an inverse and identity element in $V$. The multiplication $\cdot$ needs to have an inverse and fulfill the distributive property with respect to addition on $V$. One usually writes $\cdot(\alpha, v)=:\alpha\cdot v=: \alpha v$ for $\alpha \in \mathbb F$ and $v \in V$. The additive identity is termed $0 \in V$, the multiplicative one $1\in V$, and for each $v \in V$ its additive inverse is $-v$. Elements $v$ of the vector space $V$ are called vectors. 
+
+A subset of a vector space that is again a vector space is called a (linear) subspace. For example, it may be readily checked that the linear span of a set $\{v_i\}_{i\in I} \subset V$ of vectors, $\mathrm{span}\{v_i\}_{i\in I}:=\{\sum_{i\in I}\alpha_i v_i :  \alpha_i \in \mathbb F\  \forall \  i \in I\} $, is again a subspace of $V$. A set $\{v_i\}_{i\in I}$ of vectors is said to be a spanning system for a vector space $V$ if\footnote{An `if' in a definition is to be read as an `if and only if'.} its span equals $V$. On the other hand, it is defined to be linearly independent if the only set of scalars $\{\alpha_i \in \mathbb F\}_{i\in I}$ fulfilling $\sum_{i \in I}\alpha_i v_i = 0$ is $\alpha_i = 0$ for all $i \in I$. A set of vectors is a basis for a vector space if it is a spanning system and linearly independent. It can be shown that every vector space has a basis. This thesis focuses particularly on finite-dimensional vector spaces, which have a basis of finite length, i.e., a finite number of elements. In this case, every basis has the same length, which is defined to be the dimension of the vector space. Let $\{b_i\}_{i=1,\dots,d}$ be a basis for the vector space $V$ of dimension $d$. Then any element $v \in V$ may be written as 
+\begin{align}\label{eq:coefficient_expansion}
+v = \sum_{i=1}^d \alpha_i b_i
+\end{align}
+for suitably chosen coefficients $\alpha_i \in \mathbb F$. In general, to find the coefficients of a vector with respect to a basis, one has to solve a system of linear equations.
+
+
+In quantum information theory, the underlying field is usually the set of complex numbers $\C$, in which case the vector space is called a complex vector space. $\C$ itself is a vector space with the usual operations. Thus, from now on, only complex vector spaces will be considered. It can be helpful to have a notion of length and angles for vectors. A norm $\lvert \lvert \cdot \rvert \rvert : V \rightarrow \R_{\geq 0}$ maps vectors to non-negative real numbers such that 
+\begin{itemize}
+    \item$\norm {v+w} \leq \norm v + \norm w $ for all $v,w \in V$ (Triangle inequality)
+    \item$\norm{\alpha v}=\lvert \alpha \rvert \norm v$ for all $\alpha \in \C$ and $v \in V$ (Absolute Homogeneity)
+    \item For all $v \in V$: ($\norm v = 0 \Rightarrow v = 0)$ (Definiteness) 
+\end{itemize}
+
+An inner product over a complex vector space $V$ is a map $\langle \cdot, \cdot \rangle: V \times V \rightarrow C $, that is linear in the second argument\footnote{Note that in the mathematical literature the inner product is often linear in the first and anti-linear in the second argument.}, conjugate symmetric in the sense that $\langle v, w \rangle = \overline{\langle w, v \rangle}$ holds for all $v,w \in V$, and positive semidefinite, i.e. $\langle v, v \rangle \geq 0$ $\forall v \in V$. Here, $\bar \cdot$ denotes complex conjugation. For example, the standard inner product on $\C^n$ is $\langle v,w\rangle = \sum_{i=1}^n v_i w_i$ for vectors $(v_i)_{i=1}^n$ and $(w_i)_{i=1}^n$ in $\C^n$. Every inner product induces a norm by setting $\norm \cdot \coloneqq \sqrt{\langle \cdot, \cdot \rangle}$. A vector space $V$ together with an inner product $\langle \cdot, \cdot \rangle$ is called an inner product space $(V, \langle \cdot, \cdot \rangle)$ and $(V, \norm \cdot)$ is a normed space whenever $\norm \cdot $ is a norm. Elements of an inner product space are called orthogonal if their inner product is zero. Similarly, elements of a normed space are said to be normalized or unit vectors if their norm is one. Thus, in inner product spaces there is the notion of an orthonormal basis $\{e_i\}_{i=1,\dots, d}$ whose elements are both pairwise orthogonal and normalized, that is, $\langle e_i, e_j\rangle = \delta_{i,j}$ for all $i,j \in \{1, \dots, d\}$. Let $v \in V$ be a vector, then $v = \sum_{i=1}^d \langle e_i , v \rangle e_i$, which may be checked by applying the map $\langle e_i, \cdot \rangle$ onto equation \eqref{eq:coefficient_expansion}.  
+
+There are several interesting ways to construct new vector spaces. Of particular importance in quantum mechanics is the tensor product: Let $V_1$ and $V_2$ be two complex inner product vector spaces of finite dimension and $v_1\in V_1$ and $v_2 \in V_2$. The tensor product of $v_1$ and $v_2$ is defined as $v_1 \otimes v_2: V_1 \otimes V_2 \rightarrow \C, (w_1,w_2) \mapsto \langle w_1,v_1\rangle \langle w_2, v_2\rangle$. 
+
+One defines the tensor product $V_1 \otimes V_2$ of the vector spaces as all linear combinations of such tensor products of vectors, i.e., $V_1 \otimes V_2 \coloneqq \{\text{bilinear forms }V_1'\times V_2' \rightarrow \C\}$. Consequently, if $\{e_i\}_{i=1}^n$ and $\{f_j\}_{j=1}^m$ are bases of $V_1$ and $V_2$, respectively, then $\{e_i \otimes f_j\}_{i=1}^n {}_{j=1}^m$ is a basis for $V_1 \otimes V_2$. Hence, $\dim(V_1 \otimes V_2) = \dim(V_1)\dim(V_2)$. Similarly, one defines the tensor operators of matrices $A \in \L(V_1)$ and $B \in \L(V_2)$ on the basis as $(A \otimes B)(e_i\otimes f_j) \coloneqq Ae_i \otimes Bf_j$ and extends the definition linearly onto the whole space. If $A$ and $B$ have eigenvalues $\lambda_i$ and $\mu_j$ with eigenvectors $a_i$ and $b_j$, respectively, then $A \otimes B$ has eigenvalues $\lambda_i \mu_j$ with corresponding eigenvectors $a_i \otimes b_j$.
+
+\subsection{(Functional) Analysis}
+\textcolor{red}{motivation for analysis} Consider a normed space $(V, \norm \cdot)$. For each point $v \in V$ the open $\epsilon$-ball around $v$ is defined to be the set $B_\epsilon(v):= \{w \in V: \norm{v-w}<\epsilon\}$ of all points whose distance to $v$ is less than $\epsilon$. A subset $O \subset V$ is called open if any of its points has an $\epsilon$-ball that is contained in $O$. On the contrary, a set is closed if its complement is open. A sequence $\{v_n\}_{n \in \N}$ is said to converge to a vector $v$ in $V$ if for every $\epsilon$-ball there is a sufficiently big index $N \in \N$ such that for all $n>N$ it holds that $v_n \in B_\epsilon(v)$. In that case, $v$ is called the limit of the sequence and one writes $v_n \to v$ as well as $v=:\lim_{n \to \infty} v_n$. A point $w \in V$ is an accumulation point of the sequence if for all $\epsilon > 0$ there is $n \in \N$ such that $v_n \neq w$ and $ \in B_\epsilon(w) $. Note that an accumulation point is a weaker notion than a limit point, since the sequence might still move away from it. A closed set $C$ is indeed 'closed' in the sense that the limit of every sequence that converges inside the vector space $V$ lies again in $C$. Consider a map $T: V \rightarrow V$. $T$ is called continuous at a point $v \in V$ if for every sequence $(v_n)_{n\in \N}$ that converges to $V$ it holds that $T(v_n) \to T(v)$. If a map $T$ is continuous in all points in its domain, then $T$ itself is said to be continuous. It can be shown that this is equivalent to every pre-image of open sets being open again. A set is compact if for any open covering of the set there is a finite open subcovering.
+
+A map $T$ between complex vector spaces is linear if it preserves linearity, that is, $T(\alpha v + \beta w ) = \alpha T(v) + \beta T(w)$ holds for all scalars $\alpha,\beta$ and vectors $v,w$. For linear maps $T:V \rightarrow V$ on an inner product space $V$ with orthonormal basis $\{e_i\}_{i\in I}$ one defines the trace of $T$ as $\tr[T]\coloneqq \sum_{i\in I}\langle e_i, T e_i\rangle$. This definition is independent of the choice of the orthonormal basis. The image $T(V)$ is a vector space, and its dimension is the rank of $T$, $\rk(A)$. The kernel $\ker(T)$ is made up by all vectors in $V$ that are mapped to zero. The space of linear maps becomes itself a complex vector space again by defining scalar multiplication and addition point-wise. More specifically, let $(V, \norm\cdot)$ and $(W, \lvert\lvert \lvert \cdot \rvert \rvert \rvert)$ be normed spaces and $\mathcal L(V,W):=\{T:V \rightarrow W: \text{$T$ is linear}\}$ the vector space of linear operators. $\mathcal L(V,W)$ may be equipped with a norm by taking
+\begin{align}
+    \norm T := \sup\{\lvert \lvert \lvert T(v)\rvert \rvert \rvert: v \in V, \ \norm v = 1\}.
+\end{align}
+Whenever this mapping is finite, it defines a norm, and thus
+\begin{align}
+    \mathcal B(V,W) \coloneqq \{T \in \mathcal L(V,W): \norm T < \infty\}\text{ and }\mathcal B(V):=\mathcal B(V,V).
+\end{align}
+are normed spaces. Linear maps between vector spaces are also called operators, so that the norm defined above is called the operator norm and also depicted as $\norm\cdot _\text{op}$ or $\norm \cdot _{\infty}$. The operator norm is the infimum of all positive numbers $C$ such that $\lvert \lvert \lvert T(v)\rvert \rvert \rvert \leq C\norm v$ for all $v\in V$. Operators with finite operator norm are called bounded.
+
+Linear maps are continuous if and only if they are bounded, so that $\mathcal B(V, W)$ equivalently constitutes the space of linear bounded continuous maps. In finite-dimensional spaces, all norms are equivalent, which in particular implies that convergence does not depend on the choice of norm and, hence, the boundedness of an operator does not depend on the norms of the underlying spaces. The space $V^*:=\mathcal B(V,\C)$ is termed the dual space of $V$ and its elements are called functionals. 
+
+
+All linear maps between finite-dimensional vector spaces are equivalent to a matrix multiplication of the coefficients of the input vector with respect to some basis. The space of complex $n\times m$ matrices will be denoted by $\m M_{n\times m}$ and $\m M_n\coloneqq \m M_{n \times n}$. A basis for the space $\m M_{n \times m}$ is for example given by $\{E_{i,j}: i\in \{1,\dots,n\},  j \in\{1,\dots, m\}\}$ where $E_{i,j}$ is the matrix that has only zeros except for a one at the $(i,j)$ entry. Hence for finite-dimensional vector spaces $V$ and $W$ it holds that $\dim(\mathcal L(V,W)) = \dim(V) \cdot \dim(W)$.
+
+Sequences $(v_n)_{n\in \N} \subset V$ whose elements come asymptotically closer, that is, for every $\epsilon > 0$ there is an $N\in \N$ so that for all $n,m>N$ it is $\norm{v_n - v_m}<\epsilon$, are called Cauchy sequences. If all Cauchy sequences in a normed space converge, then the vector space is complete. Finally, a Hilbert space is a complex inner product space that is complete with respect to the norm induced by the inner product. Hilbert spaces are essential in quantum information theory and usually denoted by the symbol $\hi$. The Riesz representation theorem states that, if $\hi$ is a Hilbert space, any functional $x^* \in \hi^*$ is of the form $x^*= \langle x, \cdot \rangle$ for some unique $x\in \hi$. In the physics literature, the bra-ket-notation is often used: Let $x^* = \langle x, \cdot \rangle$. Elements $x \in \hi$ are written as $\ket x \coloneqq x$ and functionals are written as $\bra x\coloneqq x^*$. The inner product then becomes $\langle x, y \rangle = x^*(y)\eqqcolon \braket{x}{y}$. Note that the norm usually still reads $\norm x$ instead of $\norm {\ket{x}}$.
+
+Due to the Riesz representation theorem any bounded linear operator $T:X\rightarrow Y$ between Hilbert spaces $(X,\langle \cdot, \cdot \rangle_X)$ and $(Y, \langle \cdot , \cdot \rangle_Y)$ has a Hilbert adjoint $T^* \in \mathcal B(Y,X)$ that is uniquely defined via 
+\begin{align}
+    \langle Tx,y\rangle_Y = \langle x, T^* y \rangle_X \text{ for all } x\in X \text{ and }y\in Y.
+\end{align} The mapping $T\mapsto T^*$ is an involution and is operator-norm-preserving. The Hilbert adjoint of a matrix with respect to the standard inner product on $\C^n$ is its complex conjugate transpose, that is, $(A^*)_{i,j} = (\overline A)_{j,i}$ for all complex matrices $A$. Note that the Hilbert adjoint depends on the inner product. An example of a finite-dimensional Hilbert space is the space of bounded linear operators $\mathcal B(\hi)$ on a complex Hilbert space of dimension $\dim(\hi)=:d$, that is, simply complex $d\times d$ matrices $\m M_d$, together with the Hilbert-Schmidt inner product $\langle A, B \rangle _\text{HS}\coloneqq \tr[A^*B]$. Operators $T \in \B(\hi)$ are
+\begin{itemize}
+    \item Hermitian or self-adjoint if $T^* = T$,
+    \item positive semidefinite if there exists $B \in \B(\hi)$ such that $T = B^*B$,
+    \item normal if $T$ and $T^*$ commute,
+    \item a projection if $T^2 = T$, an orthogonal projection if $T=T^*=T^2$ and
+    \item unitary if $T^*T = TT^*$, that is, $T^* = T^{-1}$.
+\end{itemize}
+The spaces of Hermitian, positive semidefinite and unitary complex $d\times d$ matrices will be denoted by $\text{Herm}(\C^d)$, $\m M_d^+$ and $\m U(d)$, respectively. Semidefinite positivity of matrices induces a partial ordering via $A\geq B:\Leftrightarrow A-B\geq  0 $ for matrices $A$ and $B$ of the same dimension. Clearly, any Hermitian operator is normal.  An operator $T\in \B(V,W)$ mapping between normed spaces $V$ and $W$ is called an isometry if it preserves the norm. If $V$ and $W$ are additionally Hilbert spaces, then an equivalent definition of an isometry is that $T^*T = \1_{V}$. A partial isometry is an operator that is an isometry on the orthogonal complement of its kernel (often called the initial space). Similarly, an operator is Hermitian if and only if it preserves the inner product, which is true if and only if $\langle v, T v\rangle \in \R$ for all $v\in \hi$. $T$ is positive semidefinite if and only if $\langle v, T v\rangle \geq 0$ for all $v\in \hi$, implying that they are in particular also Hermitian.
+
+Additionally, one may consider the space $\mathcal B(\mathcal B(\hi_1),\mathcal B(\hi_2))$ where both $\mathcal B(\hi_1)$ and $\mathcal B(\hi_2)$ are equipped with the Hilbert-Schmidt inner product. Let $T \in \mathcal B(\mathcal B(\hi_1),\mathcal B(\hi_2)) $, its Hilbert adjoint satisfies $\tr[A^* T(B)] = \tr[(T^*(A))^*B]$ for all $B \in \mathcal B(\hi_1)$ and $A \in \mathcal B(\hi_2)$. In this context, $T^*$ is called the dual of the map $T$. Since the adjoint $^*:\B(\hi_2) \rightarrow \B(\hi_2)$ is bijective, this is equivalent to $\tr[A T(B)] = \tr[(T^*(A^*))^*B]$ and if $T$ (and thus $T^*$) preserves the adjoint, then the dual is uniquely defined via
+\begin{align}
+    \tr[A T(B)] = \tr[T^*(A)B] \text{ for all }B \in \mathcal B(\hi_1)\text{ and }A \in \mathcal B(\hi_2).
+\end{align}
+
+An important concept from linear algebra is eigenvalues: Let $A \in \m M_n$ and $\lambda \in \C$. If there exists a non-zero vector $v \in \C^n$ such that $Av = \lambda v$, then $\lambda$ is an eigenvalue of $A$ and $v$ a corresponding eigenvector. Lists of eigenvectors corresponding to different eigenvalues are linearly independent and if the matrix is normal, then that list is even pairwise orthogonal. More generally, if $T \in \B(X)$ is a linear bounded operator on a complete\footnote{The definition is provided for spaces of arbitrary dimension, where the reason for completeness of $X$ is this implying the resolvent being bounded again.} complex normed space $X$, then its spectrum is the set $\sigma(T):=\{\lambda \in \C: \lambda \1 - T \text{ is not bijective}\}$. Here, $\1$ is the identity on $X$. For maps on finite-dimensional spaces, injectivity and surjectivity are equivalent, so that the spectrum is exactly the set of eigenvalues in this case. It can be shown that the spectrum is non-empty and compact, hence, in particular, closed and bounded. The spectral radius is the supremum of the absolute value of all spectral values and it is upper bounded by the operator norm $\norm T$ of $T$. The peripheral spectrum is sometimes used to refer to all spectral values whose absolute value is equal to the spectral radius. The algebraic multiplicity of an eigenvalue is the order of the corresponding zero in the minimal polynomial, and its geometric multiplicity is the number of linearly independent eigenvectors corresponding to said eigenvalue. If $\lambda$ is an eigenvalue of a complex matrix $T\in \m M_n$, then $v\in \C^n, v\neq 0$ is a generalized eigenvalue if there is a $k\in \C^n $ such that $(T-\lambda \1)^k v = 0$. Again, every generalized eigenvector corresponds to only one eigenvalue.
+
+Consequently, for any matrix $T \in \m M_n$ with eigenvalues $\lambda_1, \dots, \lambda_n$ (counted with algebraic multiplicity), its trace and determinant are directly given by the sum and product of its spectrum, that is, $\tr[T] = \sum_i \lambda_i$ and $\det(T) = \prod_i \lambda_i$.
+
+One may define the square root of a quadratic matrix $T \in \m M_n$ as a matrix $\sqrt{T}$ such that $\sqrt{T}\cdot \sqrt{T} = T$. Any positive semidefinite matrix has such a square root, for example.
+There are a lot of useful structure theorems for (subclasses of) linear operators depending on their spectral properties.
+\begin{theorem}[Structure theorems for operators]
+\
+    \begin{itemize}
+    \item (Polar Decomposition) Let $\hi$ be a Hilbert space of arbitrary dimension, $T \in \B(\hi)$, then there are partial isometries $U,V \in \B(\hi)$ such that $T= U|T| = |T|V$, where $|T|:= \sqrt{T^*T}$
+    \item (Singular Value Decomposition) Let $T\in \m M_{n\times m}$ be a complex $n\times m$ matrix, then there exits an $n\times n$ unitary $U$, an $m\times m$ unitary $V$ and a diagonal $n \times m$ matrix $\Sigma$ such that $T = U\Sigma V^* = \sum_{i=1}^{\rk(A)} \sigma_i u_i \langle v_i, \cdot \rangle$, where the $\sigma_i$ are the eigenvalues of $\sqrt{T^*T}$ and $u_i$ and $v_i$ some suitably chosen unit vectors.
+    \item (Diagonalization/Spectral Decomposition) Let $T\in \m M_n$ be a matrix whose eigenvalues $\{\lambda_i\}_{i=1}^n$ all have the same algebraic and geometric multiplicity. Then $T$ is of the form 
+    \begin{align*}
+        T = \sum_{i=1}^n \lambda_i \ket{R_i}\bra{L_i},
+    \end{align*}
+    where $\ket{R_k}$ and $\ket{L_k}$ are the right and left eigenvectors, respectively. They are biorthogonal, i.e., $\braket{L_i}{R_j} = \delta_{ij}$. If $T$ is normal, then the left and right eigenvectors are the same and need to be normalized in the diagonalization.
+    \item (Jordan decomposition) For any complex square matrix $T\in \m M_n$ there is an invertible $X \in \m M_n$ and a block diagonal matrix $J \in \m M_n$ such that $T = XJX^{-1}$. The matrix $J$ is called the Jordan normal form of $T$ and of the form
+    \begin{align*}
+        J = \bigoplus_{k=1}^K J_k(\lambda_k), \ J_k(\lambda) \coloneqq \begin{pmatrix}
+\lambda & 1       & 0      & \cdots  & 0      \\
+        & \lambda & \ddots & \ddots  & \vdots \\
+        &         & \ddots & \ddots  & 0      \\
+        &         &        & \lambda & 1      \\
+\smash{\makebox[0pt][l]{\hspace{0.75em}\raisebox{1em}{\text{\huge $0$}}}} & & & & \lambda
+\end{pmatrix} \in \m M_{d_k}.
+    \end{align*}
+    Here, the $\lambda_k$ are the eigenvalues and $K$ is the number of linearly independent eigenvectors of $T$. $J_k$ is called a Jordan block corresponding to $\lambda_k$. The number of Jordan blocks corresponding to a given eigenvalue equals its geometric multiplicity. Their joint dimension $\sum_{k:\lambda_k = \lambda}d_k$ is the eigenvalue's algebraic multiplicity.  Adding the similarity transformation $X$, the matrix may be decomposed as 
+    \begin{align*}
+        T = \sum_{k=1}^K \lambda_k P_k + N_k,
+    \end{align*}
+    where $P_k$ is a (not necessarily orthogonal) projection and $N_k$ is nilpotent:
+    \begin{align*}
+        N_k^{d_k} = 0, N_kP_k =P_k N_k = N_k, P_kP_l = \delta_{kl}P_k , \tr[P_k]=d_k, \sum_{k=1}^K P_k = \1.
+    \end{align*}
+    {} 
+\end{itemize}
+\end{theorem}\noindent
+The $\sigma_i$ in the singular value decomposition are called singular values of $T$. All spectral values of unitary operators have absolute value one and all eigenvalues of Hermitian and positive semidefinite operators are real and non-negative, respectively. The converse of all three statements holds if the operator is normal, which may e.g. be seen by considering the spectral decomposition.
+
+
+The spectral decomposition allows a useful definition of functions $f: \C \rightarrow \C$ onto a matrix $T = \sum_{i=1}^d \lambda_i \ket{R_i}\bra{L_i}\in \m M_d$ via $f(T)\coloneqq \sum_{i=1}^df(\lambda_i)\ket{R_i}\bra{L_i}$. This definition works well since for example
+\begin{itemize}
+    \item it respects the algebra of functions, that is, $(f+g)(T)=f(T)+g(T)$, $(fg)(T) = f(g(T))$ and $f(g(T))=(f\circ g)(T)$,
+    \item is consistent with power series
+    \item and is invariant under similarity transformations, that is, $f(XTX^{-1}) = Xf(T)X^{-1}$ for all invertible matrices $X$.
+\end{itemize}
+There are other types of functional calculus, like holomorphic or Borel calculus. However, all of these coincide for normal matrices, see, e.g., \cite{Rudin1990-xf}, chapters 10 and 12.
+
+When operators describe an evolution over time, they often form a semigroup. Let $V$ be a set and $T_t: V \rightarrow V$ be a mapping for every real $t\geq 0$. $\{T_t\}_{t\geq 0}$ is called a one-parameter semigroup if $T_0 = \1$ and $T_t T_s = T_{t+s}$ for all $s,t \geq0 $. If $V$ is upgraded to a normed space, then a one-parameter semigroup $\{T_t:V\rightarrow V\}_{t\geq 0}$ is strongly continuous if for all $x \in X$ it holds that $\vert \vert T_tx-x\vert\vert \overset{t \rightarrow 0}{\rightarrow} 0$. In this case, it is called a $C_0$-semigroup. A one-parameter semigroup is called uniformly continuous if $\vert \vert T_t - \1\vert \vert \overset{t \rightarrow 0}{\rightarrow} 0$. Uniform implies strong continuity and the two are equivalent in finite dimensions. The infinitesimal generator $A$ of a $C_0$-semigroup $\{T_t\}_{t\geq 0}$ is defined via
+\begin{align}
+    Ax \coloneqq \lim_{t \rightarrow 0}\frac{T_t x - x}{t}
+\end{align}
+for all $x \in V$ for which the limit above exists. A semigroup is uniformly continuous if and only if the generator is bounded, in which case the semigroup elements have the form $T_t = \exp(At)$, and the domain of $A$ equals the total space, see e.g., theorem 3.7 in \cite{semigroups} for the non-trivial direction.
+
+Finally, some results on convexity are presented. For reference, see for example \cite{convex}. Let $V$ be a vector space. If a $v,w \in V$ then $\alpha v+(1-\alpha)w$ is called a convex combination of $v$ and $w$ whenever $\alpha \in [0,1]$. A set $S \subset V$ is called convex if it is closed under convex combinations. The convex hull $\text{co}(S)$ is defined to be the smallest convex set containing $S$. It can be shown that the convex hull is exactly the set of all convex combinations of elements in the set. By iteration, if $K$ is a convex set and $v_1, \dots, v_n \in K$ then $\sum_{i=1}^n \alpha_i v_i  \in K$ whenever the $\alpha_i$ make up a probability distribution. Elements that can not be written as a non-trivial convex combination of other elements are said to be extremal in that set. The Krein-Milman theorem states that a compact convex subset of a (Hausdorff locally convex topological) vector space is equal to the closure of the convex hull of its extremal points. Note that in finite dimension the span is already closed. In quantum information theory, one usually deals with complex vector spaces which are isomorphic to real spaces, so that Caratheodory's theorem may be useful: Any element in the convex hull of a set in an $n$-dimensional real vector space may be written as the convex combination of $n+1$ elements in said set. Notably, Caratheodory's theorem is constructive. 
+
+A useful result in fixed-point analysis is Brouwer's fixed-point theorem which states that any continuous map mapping a non-empty,compact and convex set into itself has a fixed point.
+
+
+\section{Basics of Quantum Information Theory}
+
+
+This chapter aims to provide an overview of the basic concepts of quantum information theory, see for example \cite{watrousTheoryQuantumInformation2018} for more comprehensive literature. Consider an experiment in a physical laboratory with possible measurements. One notable example, that one can address in this regard is the Stern-Gerlach experiment \cite{Gerlach}. Here, a beam of silver atoms is directed through an inhomogeneous magnetic field $B$. The deflecting force acting on the magnetic dipole moment $\mu$ of the atoms is given by $F = \nabla({\mu}\cdot {B})$. While classical mechanics would predict a continuous spread of the beam along the gradient axis, the beam instead splits cleanly into two discrete paths, revealing that the intrinsic magnetic moment (and hence the spin) is space-quantized and takes only discrete values. By shooting a single silver atom through the magnetic field, this framework allows us to define the measurement as whether that silver atom is deflected to the top or towards the bottom. A fundamental assumption is that an experiment may be repeated identically, arbitrarily often. Each time the said measurement is performed, it produces an outcome that is recorded. The outcome of the measurement may change, so that after any number of measurements, there is a probability distribution regarding the outcomes. For example, after $n\in\N$ many implementations a distribution of the measurement outcomes would be $k$ times 'up' and $n-k$ times 'down' for some $k\in\{1,\dots, n\}$. The \textit{preparation} of a system is the set of all actions that determine this probability distribution. The collection of identically prepared systems is what physicists call an ensemble. A \textit{state} specifies the effect that this preparation has on the system. Mathematically, a state is modeled via a density operator, see for example \cite{Von_Neumann1996-bt} for a motivation.
+\begin{definition}[Density operator] A state is described by a density operator, which is a positive semidefinite operator $\rho \in \B(\hi)$ on a Hilbert space $\hi$ such that $\tr[\rho] = 1$. The set of all density operators will be denoted by $\m D(\hi)$. A state is called pure if there exists a $\psi \in \hi$ such that $\rho = \pr\psi$.
+\end{definition}\noindent
+Note that the set of density operators $\m D(\hi)$ is convex, closed and bounded. By the spectral decomposition any density operator $\rho \in \m D(\hi)$ may be written as a convex combination of pure states, $\rho=\sum_{i=1}^{\dim(\hi)}p_i \pr{\psi_i}$, where $p_i$ are the eigenvalues of $\rho$ with corresponding eigenvectors $\psi_i$. The definition of density operators implies that the eigenvalues of $\rho$ make up a probability distribution. Take the Stern-Gerlach experiment as an example again. The degrees of freedom are 'up' and 'down' so that the corresponding Hilbert space is two-dimensional: $\hi = \text{span}\{e_\uparrow,e_\downarrow\}$. Hence, any state is of the form 
+\begin{align}\label{eq:stern-gerlach}
+\rho = p_\uparrow \pr{e_\uparrow}+p_\downarrow\pr{e_\downarrow}.
+\end{align}
+
+Mathematically, a measurement result needs to be an element of a sigma algebra $\m F$ with corresponding measurable space $(\Omega, \m F)$. It is postulated that each measurement $X \in \m F$ is assigned one operator $M(X)$ so that the probability $p(X|\rho)$ of getting the result $X$ from measuring a state $\rho \in \m D(\hi)$ is given by Born's rule $p(X|\rho) = \tr[\rho M(X)]$. 
+Clearly, $p(\cdot|\rho)$ needs to be a probability measure on $(\Omega, \m F)$ for every density operator $\rho$. Hence the mapping $X \mapsto M(X)$ needs to have the following properties:
+\begin{definition}[POVM]
+    Let $(\Omega, \m F)$ be a measurable space and $\hi$ a Hilbert space. A POVM (short for Positive Operator Valued Measure) is a map $M:\m F \rightarrow \B(\hi)$ such that
+    \begin{itemize}
+        \item[i)]$M(X)\geq 0$ for all $X \in \m F$ and 
+        \item[ii)] for every disjoint countable union $\Omega = \uplus_{n\in \N}X_n$, $X_n \in \m F$, it holds that $\sum_{n\in \N}M(X_n) = \1$.
+    \end{itemize}
+    The operators $M(X)$ are termed effect operators and the POVM is called sharp or a projective valued measurement (PVM) if additionally $M(X)$ is an orthogonal projection for every $X \in \m F$.{}
+\end{definition}
+If the number of measurement outcomes is countable, then define $M_n\coloneqq M(X_n)$ and write the ordered set $(M_n)_n$ for the POVM. For example, in the Stern-Gerlach experiment with Hilbert space $\hi = \text{span}(e_\uparrow,e_\downarrow)$ one has $\Omega = \{\text{'up'},\text{'down'}\}$. A possible PVM for the Stern-Gerlach measurement is $(\pr {e_\uparrow}, \pr {e_\downarrow})$. Thus, the probability of measuring 'up' and 'down' are given by $p(\text{'up'}|\rho) = \tr[\rho \pr{e_\uparrow}]=p_\uparrow$ and  $p(\text{'down'}|\rho) =p_\downarrow$, respectively, where $p_\uparrow$ and $p_\downarrow$ were defined in equation \eqref{eq:stern-gerlach}. It becomes apparent that pure states $\ket{\psi}\bra{\psi}$ are exactly those states for which there is a PVM, namely ($\pr \psi, \1 - \pr \psi)$, which has a unit probability outcome.
+
+\subsubsection{Composite Systems}
+Suppose there are two finite-dimensional Hilbert spaces $\hi_A$ and $\hi_B$ that describe systems that do not exclude each other. For example, the excitation and spin of a particle. Both partite states are described by density operators $\rho_A \in \m D(\hi_A)$ and $\rho_B \in \m D(\hi_B)$ on the partite systems. The joint state is described by the density matrix $\rho_A \otimes \rho_B$ on the composite Hilbert space $\hi_A\otimes \hi_B$. On the other hand, the states of a particle before and after a collision are mutually exclusive, and their joint state is thus described by the direct sum, as is known from classical physics.
+
+Suppose there is a bipartite system $\hi_{AB}\coloneqq \hi_A \otimes \hi_B$ and a state $\rho \in \m D(\hi_{AB})$ on it. By Born's rule, the probability of measuring an outcome associated with an effect operator $X_{AB}=X_{AB}^* \in \m B(\hi_{AB})$ is $\tr[\rho X_{AB}]$. If the measurement only affects one subsystem, say system A, the effect operator is of the form $X \otimes \1$. In this case, there is an effective density operator describing the state on subsystem $A$ in the following sense:
+\begin{theorem}[Partial Trace]\label{thm:partial_trace}
+    There is a unique linear map $\tr_B: \m B(\hi_A \otimes \hi_B) \rightarrow \m B(\hi_A), \ \rho \mapsto \rho^A$ such that
+    \begin{align*}
+        \forall X \in \m B(\hi_1): \tr[\rho(X \otimes \1)] = \tr[\rho^A X].
+    \end{align*}
+    $\tr_B$ is called the partial trace and if $\rho \in \m D(\hi_A \otimes \hi_B)$ is a state, then $\rho^A$ is called its reduced state on system A. The partial trace has the following properties:
+    \begin{enumerate}
+        \item $\tr[\rho] = \tr[\rho^A]$ for all $\rho \in \m B(\hi_A \otimes \hi_B)$ (Trace preserving)
+        \item $\rho \geq 0  \Rightarrow \rho^A \geq 0$ for all $\rho \in \m B(\hi_A \otimes \hi_B)$ (Semidefinite positivity preserving)
+        \item For all $v,w \in \hi_A$ and every orthonormal basis $\{b_i\}_{i=1}^{d_B}$ it is $\langle v, \rho^A w\rangle = \sum_{i=1}^{d_A} \langle v \otimes b_i, \rho(w \otimes b_i)\rangle$.
+        \item For all $A \in \m B(\hi_A)$ and $B \in \m B(\hi_B)$ it is $\tr_B[A \otimes B] = \tr[B]A$. {}
+    \end{enumerate}
+\end{theorem}\noindent
+Properties i) and ii) of theorem \ref{thm:partial_trace} imply that the partial trace of a density operator is indeed again a density operator. 
+
+Consider a product observable $A \otimes B \in \m M_{d_Ad_B}$ and a bipartite state $\rho \in \m D(\C^{d_A}\otimes \C^{d_B})$. The expectation value of the corresponding measurement is $\tr[\rho A \otimes B]$ and the expectation values that Alice and Bob measure on their subsystems are $\tr[A\rho^A]$ and $\tr[B\rho^B]$, respectively. If the product of the partite expectation values yields the global expectation, then the global state is called uncorrelated or a product state:
+\begin{prop}
+    Let $\rho \in \m D(\C^{d_A}\otimes \C^{d_B})$ be a bipartite density matrix. It is called a product state if 
+    \begin{align*}
+        \rho = \rho^A \otimes \rho^B \Leftrightarrow \left(\tr[\rho A \otimes B] = \tr[\rho^A A ]\tr[\rho^B B] \text{ for all }A\in \B(\C^{d_A}),B\in \B(\C^{d_B})\right)
+    \end{align*}{}
+\end{prop}
+\begin{proof}
+    The direction $\Rightarrow$ is straightforward. So assume the right hand side holds, then $\langle (\rho -\rho^A \otimes \rho ^B)^*, A \otimes B\rangle_\text{HS}$ holes for all $A$ and $B$. By linearity $\rho -\rho^A \otimes \rho ^B$ is orthogonal on $\m M_{d_Ad_B}$, which implies $\rho = \rho^A \otimes \rho^B$.
+\end{proof}
+All other states are correlated. However, in some states, this correlation is not quantum in nature but stems from a classical probabilistic preparation of the state. Such states are called separable. The definition is provided for positive semidefinite operators of arbitrary trace:
+\begin{definition}
+    A positive semidefinite bipartite matrix $O \in (\m M_{d_1}\otimes \m M_{d_2})^+$ is called separable if there is $n\in \N$ and $A_1, \dots, A_n \in \m M_{d_1}^+$, $B_1, \dots, B_n \in \m M_{d_2}^+$ such that $O = \sum_{i=1}^n A_i \otimes B_i$. Otherwise, the matrix is called entangled. The set of all such separable matrices will be denoted by SEP$(\C^{d_1},\C^{d_2})$ and the separable density matrices by $\m D_\text{sep}(\C^{d_1},\C^{d_2})$
+\end{definition}\noindent
+Equivalently, a bipartite density matrix is separable if and only if it is a classical mixture of product states. Note that $\m D_\text{sep}(\C^{d_1},\C^{d_2})$ is a convex closed and bounded set. There are several necessary or sufficient conditions for a state to be entangled. An overview is given in chapter \ref{ch:entanglement}. 
+
+The following is a very useful result:
+\begin{prop}[Hilbert-Schmidt isomorphism \cite{schatten1950theory}]\label{hilbert-schmidt}
+Let 
+\begin{align*}
+I: \C^{d_1} \otimes \C^{d_2} \to \m M_{d_2\times d_1}, 
+\ket \psi \otimes \ket \phi \mapsto \ket\psi\bra{\bar{\phi}}
+\end{align*}
+extended linearly. Then $I$ is bijective and
+\begin{enumerate}
+\item[(i)] For all $ \ket Phi, \ket \Psi \in \C^{d_1} \otimes \C^{d_2}$ it is $
+\braket{ \Phi}{\Psi} = \operatorname{tr}[I(\ket \Phi)^* I(\ket \Psi)].
+$
+    \item[(ii)] For $A \in \m M_{d_1}$, $B \in \m M_{d_2}$ and $\Psi \in \C^{d_1}\otimes \C^{d_2}$ it is $
+    I[(A \otimes B)\ket \Psi] = B I(\ket\Psi) A^T$
+    where the transpose is taken in the basis used in the complex conjugation in the definition of $I$.
+    
+    \item[(iii)] If $d_1=d_2$ and $I(\ket\Psi)$ is invertible, then for all $A \in \C^{d_1}$ there exists a $B \in \m M_{d_2}$ such that
+    \[
+    (A \otimes \1)\ket\Psi = (\1\otimes B)\ket \Psi.
+    \]{}
+\end{enumerate}
+\end{prop}
+\begin{proof}\mbox{} % \mbox{} forces the list to start on a new line
+(i) and (ii) follow from plugging in the definition. For (iii), apply (ii) to $(A\otimes \1)\Psi = (\1 \otimes B)\Psi$ yielding $B=I(\Psi)A^TI(\Psi)^{-1}$.
+
+\end{proof}\noindent
+Let $\ket \psi \in \hi_1 \otimes \hi_2$ be a bipartite vector. Applying the Hilbert-Schmidt isomorphism on it yields a matrix that has a singular value decomposition $I(\ket \psi) = \sum_i s_i \ket{f_i}\bra{\overline e_i}$. The inverse $\ket \psi = \sum_i s_i \ket{e_i}\otimes \ket{f_i}$ is called the Schmidt decomposition:
+\begin{prop}[Schmidt decomposition]
+    Let $\hi_1$ and $\hi_2$ be Hilbert spaces, $\ket \psi \in \hi_1 \otimes \hi_2$ and $r$ the number of non-zero singular values $s_i >0$ of $\ket \psi$. There are orthonormal bases $\{\ket{e_i}\}_{i=1}^{\dim(\hi_1)}$ and $\{\ket{f_i}\}_{i=1}^{\dim (\hi_2)}$ for $\hi_1$ and $\hi_2$, respectively, such that $
+        \ket \psi = \sum_{i=1}^r s_i \ket{e_i}\otimes \ket{f_i}$. Hence, $\norm \psi ^2 = \sum_{i=1}^r s_i^2$. $r\eqqcolon \text{SR}(\ket \psi)$ is called the Schmidt-rank of $\ket \psi$ and the $s_i$ are the Schmidt values of $\ket \psi$.{}
+ \end{prop}\noindent
+Practically, the Schmidt decomposition can also be computed in the following way: With respect to chosen orthonormal bases expand $\ket \psi = \sum_{i=1}^{d_A}\sum_{j=1}^{d_B}C_{ij}\ket{ij}$. $C$ is a $d_A\times d_B$ complex matrix with singular value decomposition $C=U\Sigma V^*$ so that $C_{ij}=\sum_k U_{ik}\lambda_kV_{kj}^*$ and 
+\begin{align}
+    \ket \psi = \sum_k \lambda_k \underbrace{\left(\sum_i U_{ik}\ket i\right)}_{\eqqcolon \ket{e_i}}\otimes \underbrace{\left(\sum_j V_{kj}^*\ket j\right)}_{\eqqcolon \ket{f_i}}.
+\end{align}
+The Schmidt rank may equivalently be written as SR$(\ket\psi) = \text{rk}((id\otimes \tr)(\pr \psi))$ and is upper bounded by $d_A$ and $d_B$. Clearly, a pure state is separable if and only if its Schmidt rank is equal to one. Note that $\m D(\hi)$ is also a Hilbert space together with the $\norm \cdot _2$ norm, so that there is also a Schmidt decomposition for mixed states $\rho = \sum_{i=1}^r s_i E_i \otimes F_i$, where the $E_i$ and $F_i$ are each orthonormal with respect to the Hilbert-Schmidt inner product. Since there are mixed separable states, a Schmidt rank greater than one is not a criterion for entanglement. For example, the separable state $\rho =  \ket{00}\bra{00}/2+\ket{11}\bra{11}/2$ is already written in Schmidt decomposition and thus has Schmidt rank $\text{SR}(\rho) = 2$. To find a more fitting analog to the Schmidt rank for mixed states in the context of separability, the Schmidt number of a density matrix is introduced:
+\begin{definition}[Schmidt number\cite{Terhal2000}]
+    The Schmidt number $\text{SN}(\rho)$ of a density matrix $\rho \in \m D(\C^d)$ is the smallest $n\in \N$ such that $\rho$ admits a convex decomposition into pure states whose Schmidt ranks, each, do not exceed $n$. That is,
+    \begin{align*}
+        \text{SN}(\rho) \coloneqq \min\left\{\max_i \text{SR}(\ket{\psi_i}) : (p_i, \ket{\psi_i})_i \text{ is a pure state decomposition of }\rho\right\}
+    \end{align*}{}
+\end{definition}
+Clearly, the Schmidt number and Schmidt rank of a pure state are the same: $\text{SN}(\pr \psi) = \text{SR}(\ket{\psi})$. A state is separable if and only if its Schmidt number is one.
+
+\subsubsection{Evolution}
+
+
+
+
+
+Suppose that after the silver atom passes through the magnetic field, it passes through another magnetic field with the same orientation as the first, then another, and so on. Interestingly, the results of the subsequent measurements are equal to those of the first one, with unit probability. See, for example, \cite{Frisch1933} for an experimental realization of a multi-stage Stern-Gerlach experiment. Consequently, a measurement may change the state. Such a change of state is not described by POVMs. Any map that describes a state change needs to map a density operator to another density operator (on a possibly different Hilbert space). Hence, one considers mappings $T:\m D(\C^{d_1}) \rightarrow \m D(\C^{d_2})$ that preserve positive-semidefiniteness and the trace. By the spectral decomposition of an Hermitian matrix into a positive and negative part, $T$ also preserves Hermiticity. Since any matrix $X = (X+X^*)/2+(X-X^*)/(2i)\eqqcolon A+B$ may be decomposed into its Hermitian and skew-Hermitian parts, it also is $T(X^*)=T(A)-T(B)=T(X)^*$. A state $\rho \in \m D(\C^d)$ may be the reduced state of a state $\sigma \in \m D(\C^d \otimes \C^{d_A})$ on a bigger system. In this case, the evolution of the composite system is given by $T\otimes \id_{d_A}$, which also needs to preserve the positive-semidefiniteness (it is trace-preserving if $T$ is). This leads to the following definitions:
+\begin{definition}An operator $T\in \m B(\m M_{d_1},\m M_{d_2})$ is called 
+\begin{itemize}
+    \item trace-preserving if $\tr[T(X)]= \tr[X]$ for all $X\in \m M_{d_1}$,
+    \item unital if $T(\1) = \1$,
+    \item positive if $T(X)\geq 0$ for all $X \geq 0$,
+    \item $n$-positive if $T\otimes \id_n$ is positive and
+    \item completely positive if $T$ is $n$-positive for all $n\in \N$.
+\end{itemize}
+The set of completely positive linear maps from $\m M_{d_1}$ to $\m M_{d_2}$ will be denoted by $ {CP}(\C^{d_1}, \C^{d_2})$. $T$ is called a quantum channel if it is linear, trace-preserving and completely positive. The set of all quantum channels mapping a state on system $\C^{d_1}$ to $\C^{d_2}$ is written as $C(\C^{d_1}, \C^{d_2})$ and $C_d \coloneqq C(\C^d) \coloneqq  C(\C^d,\C^d)$. 
+\end{definition}
+It should not matter whether a composite system is tensored on the left or right side, and indeed $T\otimes \id_n$ is positive if and only if $\id_n \otimes T$ is positive. To see this, note that $T\otimes \id_n = (S_\text{out} \cdot S_\text{out}^*)\circ T \circ (S_\text{in} \cdot S_\text{in}^*)$, where $S_\text{in}:\C^d\otimes \C^{n}\rightarrow \C^{n}\otimes \C^{d}$ and $S_\text{out}:\C^{n}\otimes \C^{d}\rightarrow \C^{d}\otimes \C^{n}$ are the swap operators. Since swapping of an operator preserves the spectrum, it preserves positive semidefiniteness, from which the statement follows.
+
+Thus, if $T$ is a quantum channel and $\rho$ a density matrix, then $\rho \mapsto T(\rho)$ is a valid evolution of a density operator. If one wants to describe an evolution of a quantum system in continuous time a $C_0$-semigroup of quantum channels is needed:
+\begin{definition}
+    A quantum dynamical semigroup (QDS) $\{T_t \in \m C(\C^d)\}_{t\geq 0}$ is a $C_0$-semigroup in which each element is a quantum channel.{}
+\end{definition}
+
+As explained in section \ref{sec:math}, every quantum channel $T$ has a dual map $T^*$ uniquely defined by the equation
+\begin{align}\label{eq:dual}
+\tr[AT(B)] = \tr[T^*(A)B]\text{ for all }A,B \in \B(\hi).
+\end{align}
+Suppose a system is in state $\rho \in \m D(\hi)$ and an outcome with corresponding effect operator $M$ is measured with probability $\tr[\rho M]$. Now the state evolves into $T(\rho)$ so that the new probability is $\tr[T(\rho)M]$. By using the dual, this probability is equal to $\tr[\rho T^*(M)]$, where $M \mapsto T^*(M)$ may be viewed as the evolution of the measurement process. The former, where the state evolves, is known as the Schrödinger picture and the latter, where observables evolve, as the Heisenberg picture. There are the following relations between properties of a linear map on matrix spaces and its dual:
+\begin{prop}
+    Let $T \in \m B(\C^{d\times d},\C^{d' \times d'})$ and $T^*$ its dual, then
+    \begin{itemize}
+        \item[(i)]$T\geq0\Leftrightarrow T^* \geq 0$
+        \item[(ii)]$T$ is completely positive $\Leftrightarrow$ $T^*$ is completely positive
+        \item[(iii)]$T$ is trace preserving $\Leftrightarrow$ $T^*$ is unital{}
+    \end{itemize}
+\end{prop}
+\begin{proof}
+    (iii) is proven by chosing $A=\1$ in equation \eqref{eq:dual} from which follows $\langle \1-T^*(A), B\rangle_{HS}=0$ for all $B\in \m M_d$ and $A\in \m M_{d'}$, so $\{\1-T^*(A)\}\perp \C^{d \times d}\Rightarrow T^*(A)=\1$ for all $A \in \C^{d'\times d'}$. For (i) choose $A=\ket{a}\bra{a}$ or $B=\ket{b}\bra{b}$ and (ii) by applying (i) on $T \otimes \1_n$ for every $n\in\N$.
+\end{proof}
+From this it is straightforward, that, if $(M_n)_n$ is a POVM, then so is $(T(M_n))_n$. Consider the following examples:
+
+
+Finally, the state change due to measurements is described by instruments:
+\begin{definition}[Quantum Instrument]Let $(\Omega, \m F)$ be a measurable space corresponding to a measurement. A quantum instrument is a map $I:\m F \rightarrow \m{CP}{\hi_1, \hi_2}, X \mapsto I_X$ such that for any disjoint parition, $\Omega = \uplus_k X_k$, $\sum_k I_{X_k}$ is trace-preserving.{}
+\end{definition}
+The post-measurement state after outcome $Y$ is then given by $I_Y(\rho)/\tr[I_Y(\rho)]$.
+
+\subsubsection{Choi matrix and Kraus and environment representation}
+For the sake of convenience, orthonormal bases for $\C^d$ will be denoted by $\{\ket i\}_{i=0}^{d-1}$. Another way to represent a linear mapping by a matrix is via the Choi-Jamilkowski-bijection. For this characterization, first consider the following lemma:
+\begin{prop}[Cyclicity]\label{prop:cyclicity}
+    The vector
+    $\ket \Omega \coloneqq \sum_{i=1}^{d}\ket{i}\otimes\ket{i}$ is called the (unnormalized) maximally entangled vector. Let $\ket{\psi}\in \C^d\otimes \C^{d'}$, then $\ket \psi = (\1_d \otimes I(\psi))\ket \Omega$, where $I$ is the Hilbert-Schmidt map with respect to the basis used in $\ket \Omega$.
+\end{prop}
+\begin{proof}
+    Decompose $\ket \psi = \sum_{i=1}^d\sum_{j=1}^{d'}c_{ij}\ket{ij}$, then $I(\psi) = \sum_{i=1}^d\sum_{j=1}^{d'}c_{ij} \ket{j}\bra{i}$ and thus 
+    \begin{align*}
+    (\1_d \otimes I(\psi))\ket \Omega = \sum_{ijk}c_{ij}\ket{k}\otimes \ket{j}\braket{i}{k} = \sum_{ij}c_{ij}\ket{ij}=\ket\psi
+    \end{align*}
+\end{proof}
+By noting that $I(\ket\Omega) = \1$, which is invertible, one has $\ket \psi = (\1 \otimes A)\ket \Omega = (A^\text T\otimes \1)\Omega$, when $A\coloneqq I(\psi)$.
+\begin{theorem}[Choi matrix\cite{Choi1975}]
+    Let $T \in \m B(\m M_{d_1}, \m M_{d_2})$. Its Choi matrix with respect to an orthonormal basis $\{\ket{i}\}_{i=1}^{d_1}$ of $\C^{d_1}$ is $C_T\coloneqq (\id_{d_1} \otimes T)(\pr \Omega)=\sum_{i,j=1}^{d_1} \ket{i}\bra{j}\otimes T(\ket{i}\bra{j}) \in \m M_{d_1 \times d_2}$.
+    \begin{enumerate}
+        \item$T\mapsto C_T$ is a bijection with inverse $T(\cdot) = \tr_1[C(\cdot^T \otimes \1)]$, where the transpose is to be taken in the basis used in $\ket \Omega$. $T$ is also uniquely defined via $\tr[T(A)B]=\tr[C(A^\text T \otimes B)]$
+        \item$C = C^* \Leftrightarrow T$ preserves the adjoint
+        \item$C \geq 0 \Leftrightarrow T$ is completely positive.
+        \item$\tr_2[C] = \1 \Leftrightarrow T$ is trace-preserving
+        \item$\tr_1[C] = \1 \Leftrightarrow T$ is unital
+    \end{enumerate}
+\end{theorem}
+\begin{proof}
+    \begin{enumerate}
+        \item a straightforward calculation confirms the inverse relations.
+        \item Assume the Choi matrix is Hermitian. Then for all $B \in \m M_{d_2}$ it is $\tr[T(A^*)B] = \tr[C(\overline A\otimes B)] = \overline{\tr[C(A^\text T \otimes B^*)]}=\overline{\tr[T(A)B^*]}=\overline{\tr[T(A)^*B]}$, which then via the Hilbert-Schmidt inner product implies $T(A)^*=T(A^*)$ for all $A \in \m M_{d_2}$. The other direction is straightforward.
+    \item Suppose $T$ is completely positive, then $C$ is clearly positive. For the other direction, one must show $(\id_n \otimes T)(\pr \psi)\geq 0$ for all $\psi \in \C^n \otimes \C^{d_2}$ since this extends by the spectral decomposition to all positive operators. Define $A\coloneqq I(\psi)^\text T$, then $\ket \psi = (A \times \1)\ket \Omega$ and thus
+    \begin{align*}
+        (\id_n \otimes T)(\pr \psi) = (\id_n \otimes T)((A \otimes \1)(\pr \Omega) (A^* \otimes \1)) = (A\otimes \1)C_T(A^*\otimes \1),
+    \end{align*}
+    which is positive if $C_T$ is positive.
+    \end{enumerate}
+    4. and 5. are straightforward by using the first point.
+\end{proof}
+In particular, 3. implies that a map $T \in \m B(\m M_{d_1}, \m M_{d_2})$ is completely positive if and only if it is $d_1$-positive.
+
+With the Choi matrix, one can prove an important structural theorem for completely positive linear maps:
+\begin{theorem}[Kraus representation \cite{kraus1971general}, \cite{Choi1975}]\label{thm:kraus}
+A linear map $T \in \mathcal{B}(\mathcal{M}_d, \mathcal{M}_{d'})$ is completely positive if and only if it is of the form
+\begin{align*}
+    T(\cdot) = \sum_{i=1}^r K_i \cdot K_i^*.
+\end{align*}
+The operators $K_i$ are called Kraus operators of the map and the minimal number of them is the Kraus rank of $T$. The following statements hold:
+\begin{enumerate}
+    \item $T$ is trace preserving if and only if $\sum_{i=1}^r K_i^*K_i = \1$ and unital iff $\sum_{i=1}^r K_iK_i ^*= \1$.
+    
+    \item The Kraus rank is the rank of the Choi matrix.
+    
+    \item There is a set of Kraus operators that is mutually orthogonal with respect to the Hilbert-Schmidt inner product.
+    
+    \item \textit{Freedom:} Two sets of Kraus operators $\{K_j\}$ and $\{\tilde{K}_i\}$ represent the same map $T$ if and only if there is a unitary $U$ so that $K_j = \sum_i U_{ki}\tilde{K}_i$ (where the smaller set is padded with zeros).
+\end{enumerate}
+\end{theorem}
+
+\begin{proof}
+If $T$ is completely positive, then the Choi matrix $C_T$ is positive and consequently may be written as $C_T = \sum_{i=1}^r \pr {\psi_i}$, where $r = \rk(C_T)$. According to \ref{prop:cyclicity} it is $\ket  {\psi_i} = (\1\otimes K_i)\Omega$ for a suitably chosen $K_i$. Thus, $C_T = \sum_{i=1}^r (\1\otimes K_i)\pr \Omega (\1 \otimes K_i^*) = (\id \otimes T)\pr \Omega$, from which the desired Kraus decomposition of $T$ follows. To see that any map in Kraus decomposition is completely positive, one may simply consider the Choi matrix again. Eigenvectors of normal matrices may be chosen mutually orthogonal, i.e., $\braket{\psi_i}{\psi_j} = \bra\Omega \1\otimes K_i^*K_j  \ket \Omega \sim \delta_{ij}$. Using that $\bra{\Omega}A\otimes B\ket{\Omega}=\tr[A^\text T B]$, with transpose in the basis used in $\ket \Omega$, shows the possible orthogonality of the Kraus operators. Two spectral decompositions of the Choi matrix are the same, i.e. $\sum_i \pr {\psi_i} = \sum_j \pr{\tilde{\psi}_j}$, if and only if $\ket{\psi_i} = \sum_jU_{ij} \ket{\tilde\psi_j}$ \cite{Hughston1993}. Applying this to the Choi matrix proves the freedom of the Kraus operators.
+\end{proof}\noindent
+If a map $T$ has Kraus operators $\{K_i\}_i$ then its dual $T^*$ has Kraus operators $\{K_i^*\}_i$.
+
+\begin{ex}[Some quantum channels]The following maps are examples of quantum channels, which may be verified by considering the Choi matrix e.g.:
+\begin{itemize}
+    \item $\m D(\C^d)\ni\rho \mapsto \rho \otimes \sigma$, where $\sigma \in \m D(\C^{d'})$ for some $d'\in \N$.
+    \item $\m D(\C^d)\ni\rho \mapsto U\rho U^*$, where $U$ is a $d\times d$ complex unitary.
+    \item $\m D(\C^d\otimes \C^{d'})\ni\rho \mapsto \tr_2[\rho]$\footnote{Or alternatively the partial trace over the first subsystem.}
+\end{itemize}
+\end{ex}
+Note that compositions of completely positive and trace-preserving maps are again completely positive and trace-preserving, respectively. Consequently, the set of quantum channels $\m C(\hi_1, \hi_2)$ is closed under compositions. It turns out that any quantum channel is a composition of the three maps introduced above. This holds true for any quantum channel, but here the result is provided for channels between spaces of the same dimension:
+\begin{theorem}[Environment representation, e.g. \cite{wolf2012quantum} theorem 2.5]
+    Let $T \in C_d$ be a quantum channel. There is an auxiliary dimension $k$ and a unitary $U\in \m M_{d}\otimes \m M_{k}$ and a unit vector $\ket\phi \in \C^{k}$ so that
+    \begin{align*}
+        T(\cdot) = \text{tr}_{\C^k}[U(\cdot \otimes \pr \phi)U^*]
+    \end{align*}
+\end{theorem}
+
+

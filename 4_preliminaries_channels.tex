@@ -1,0 +1,332 @@
+\chapter{Quantum Channels, their Representations and Properties} \label{ch:3_preliminaries_channels}
+\section{More Matrix representations}
+\subsubsection{Natural Matrix and Liouville Representation}\label{sec:matrix-rep}
+As quantum channels are linear maps, they may be represented by a matrix with respect to a basis, see for example section 4.4.1 in \cite{heinosaariMathematicalLanguageQuantum2011} or section 2.3 in \cite{wolf2012quantum}. Note that the set of Hermitian matrices makes up a real vector space. Let $\{E_i\}_{i=0}^{d^2-1}$ and $\{F_j\}_{j=0}^{d'^2-1}$ be mutually orthogonal bases for $\text{Herm}(\C^d)$ and $\text{Herm}(\C^{d'})$, respectively, with respect to the Hilbert-Schmidt inner product. Then any $A \in \text{Herm}(\C^d)$ can be written as 
+\begin{align}
+    A = \sum_i a_i E_i \text{ with }a_i = \frac{\braket{E_i}{A}_\text{HS}}{\braket{E_i}{E_i}_\text{HS}}.\label{eq:vector-represen}
+\end{align}
+Let $T \in \m B(\C^d,\C^{d'})$, then
+\begin{align}\label{eq:bloch-trafo}
+    T(A) = \sum_j \frac{\tr[F_j^*T(A)]}{\tr[F_j^*F_j]}F_j   = \sum_{ij}T_{ji} a_iF_j = \langle \Vec{F}, \hat T\cdot \vec a\rangle \text{, where }T_{ji}\coloneqq \frac{\tr[F_j^*T(E_i)]}{\tr[F_j^*F_j]}
+\end{align}
+and $\hat T\coloneqq (T_{ij})_{ij}$, $\vec F\coloneqq (F_i)_i$ and $\vec a \coloneqq (a_i)_i$. That is, $\hat T$ is a $d'\times d$ matrix representation of the map $T$ and $T(A)$ has the coefficients $T(A)_j = \sum_i T_{ji}a_i$ with respect to $(F_j)_j$. Such a matrix representation will be called a natural matrix representation. Note that the natural matrix of the composition of linear maps is exactly the matrix multiplication of their natural matrix representations.
+
+For the sake of simplicity and since this thesis is concerned mainly with powers of channels, now channels between spaces of the same dimension will be considered. I.e., $d=d'$ and let $E_i = F_i$ for all $i$. One may always choose $E_0 = \1$ and $\tr[E_i^*E_i] = d$ by the Gram-Schmidt procedure. By orthogonality all other basis elements are then traceless. An example of such a basis are the generalized Gell-Mann matrices, see e.g. \cite{Kimura2003}, which generalize the famous Pauli and Gell-Mann matrices in dimensions $d=2$ and $d=3$, respectively. In this case, if $T$ is trace-preserving, one has $
+    T_{0j}=\tr[E_j]/d$ by using unitality of the dual $T^*$. In particular, $\hat T$ takes the form
+    \begin{align}\label{eq:natural-matrix-rep}
+        \hat T = \begin{pmatrix}
+            1 & 0 \\
+            v & \Delta
+        \end{pmatrix},
+    \end{align}
+where $v \in \R^{d^2-1}$ and $\Delta$ is a $(d^2-1)\times (d^2-1)$ real matrix. 
+
+
+Take a density matrix $\rho \in \m D(\C^d)$, its vector representation corresponding to equation \eqref{eq:vector-represen} is
+\begin{align}
+    \rho = \frac{1}{d}(\1+\vec r \cdot \vec E) \text{ with }r_i =\tr[E_i^*\rho].
+\end{align}
+The vector $\vec r \in \R^{d^2-1}$ is the Bloch vector of the state $\rho$. The Bloch picture is most famously used in the qubit case with respect to the Pauli basis, in which case the Bloch vector lies inside a sphere of radius one. A qubit state is pure if and only if its Bloch vector lies on the surface of the ball. In general dimension, the purity $\tr[\rho^2]$ is computed as 
+\begin{align}
+    \tr[\rho^2] = \frac{1}{d}(1+\vert \vert \vec r\vert \vert ^2).
+\end{align}
+Enforcing the upper bound of one on the purity thus yields $\vert \vert \vec r\vert \vert \leq \sqrt{d-1}$. In contrast to the qubit case, however, generally lying inside the ball of radius $\sqrt{d-1}$ is not sufficient to make up a valid density matrix.
+
+As a concrete counterexample, consider a qutrit system ($d=3$), where the outscribed sphere of valid Bloch vectors has a radius of $\sqrt{3-1} = \sqrt{2}$. To satisfy the purity condition in equation (3.1.5), the traceless basis elements $\vec{E}$ must be normalized such that $\text{tr}[E_i^2] = 3$. So choose one of these orthogonal basis observables to be the diagonal matrix $E = \text{diag}(\frac{1}{\sqrt{2}}, \frac{1}{\sqrt{2}}, -\sqrt{2})$. Now, construct a state whose Bloch vector $\vec{r}$ points entirely along this axis with a magnitude of $||\vec{r}|| = 1$, it satisfies the bound $1 \le \sqrt{2}$. However, computing the corresponding operator yields
+\begin{align}
+\rho = \frac{1}{3}(\1 + E) = \frac{1}{3} \begin{pmatrix} 1 + \frac{1}{\sqrt{2}} & 0 & 0 \\ 0 & 1 + \frac{1}{\sqrt{2}} & 0 \\ 0 & 0 & 1 - \sqrt{2} \end{pmatrix}.
+\end{align}
+Because $\sqrt{2} > 1$, the third eigenvalue is strictly negative. Therefore, despite lying well within the bounded sphere, $\rho$ is not positive semi-definite and fails to be a valid density matrix.
+
+
+As can be seen from equation \eqref{eq:bloch-trafo}, a quantum channel $T$ transforms the Bloch vector according to 
+\begin{align}
+\begin{split}
+    r_i &\mapsto \sum_j T_{ij}r_j = \frac{1}{d}T_{i0}+ \sum_{j=1}^{d^2-1}T_{ij}r_j
+    \Rightarrow \vec r \mapsto  \Delta\vec r+\vec v,
+    \end{split}
+\end{align}
+Consequently, quantum channels are affine mappings between the Bloch vectors. Note that $\vec r = 0$ corresponds to the maximally mixed state which gets mapped as $\vec 0 \maps \vec v$. Consequently, $\vert \vert \vec v \vert \vert \leq \sqrt{d-1}$ is a necessary condition for $T$ being a quantum channel. It also follows directly that a channel is unital if and only if $\vec v = 0$. Unfortunately, in arbitrary dimension there are no simple necessary and sufficient criteria on the natural matrix representation for the channel to be completely positive. In the qubit special case, one can derive those necessary and sufficient conditions depending on $\vec v$ and the eigenvalues of $\Delta$, see \cite{ruskai}.
+
+One may also choose a non-Hermitian basis for $\m M_d$, e.g., the standard matrices $E_{ij}\coloneqq \ket{i}\bra{j}$. The matrix of $T$ with respect to this basis is the Liouville representation. It is given by $\m L_{ij,kl}=\bra{i}T(\ket{k}\bra{l})\ket{j}$
+according to \eqref{eq:bloch-trafo} since the basis $E_{ij}$ is also mutually orthogonal.
+
+
+
+\subsubsection{$\chi$-matrix representation}
+There is still another representation of a quantum channel by a matrix, called the $\chi$-matrix. This matrix was introduced in \cite{Chuang1997}; for a more recent review, see section 4.4.2 in \cite{heinosaariMathematicalLanguageQuantum2011}.
+\begin{lemma}\label{lemma:basis-superoperators}
+    Let $\{E_i\}_{i=1}^{d^2}$ be an orthonormal basis for $\m M_d$. For each $A \in \m M_d$, define $S_{ij}(A)\coloneqq A_i \rho A_j^*$. The maps $\{S_{ij}\}_{ij}$ form a basis for $\m B(\m M_d)$.
+\end{lemma}
+\begin{proof}
+The Choi-Jamio\l{}kowski isomorphism establishes a bijective linear mapping between superoperators and $d^2 \times d^2$ matrices. For a general map $\mathcal{E}$, the Choi matrix is defined as $C_{\mathcal{E}} = \sum_{k,l=1}^d \ket{k}\bra{l} \otimes \mathcal{E}(\ket{k}\bra{l})$, where $\{\ket{k}\}$ is the standard computational basis. Applying this definition to the map $S_{ij}$ yields
+\begin{align*}
+    C_{S_{ij}} &= \sum_{k,l=1}^d \ket{k}\bra{l} \otimes \left(E_i \ket{k}\bra{l} E_j^*\right) = \left(\sum_{k=1}^d \ket{k} \otimes E_i \ket{k}\right) \left(\sum_{l=1}^d \bra{l} \otimes \bra{l} E_j^*\right) = \ket{\Psi_i}\bra{\Psi_j},
+\end{align*}
+where $\ket{\Psi_i} := \sum_{k=1}^d \ket{k} \otimes E_i \ket{k}$ is a vector in $\mathbb{C}^d \otimes \mathbb{C}^d$. Because $\{E_i\}_{i=1}^{d^2}$ forms a basis for $\mathcal{M}_d$, the Hilbert-Schmidt isomorphism guarantees that the corresponding set of vectors $\{\ket{\Psi_i}\}_{i=1}^{d^2}$ forms a basis for $\mathbb{C}^d \otimes \mathbb{C}^d$. Consequently, the set of rank-one outer products $\{\ket{\Psi_i}\bra{\Psi_j}\}_{i,j=1}^{d^2}$ forms a complete basis for the space of all $d^2 \times d^2$ matrices. Since the Choi mapping is an isomorphism, it inherently preserves linear independence and dimensionality. Therefore, the preimages $\{S_{ij}\}$ span the entire superoperator space and form a complete basis for $\mathcal{B}(\mathcal{M}_d)$.
+\end{proof}
+\begin{definition}[$\chi$-matrix]
+Let $\mathcal{E}\in \m B(\m M_d)$ be a linear map between matrix spaces, $\{E_i\}_{i=1}^{d^2}$ be an orthonormal basis for $\m M_d$ and the $S_{ij}$ as defined in lemma \ref{lemma:basis-superoperators}. By the statement of said lemma, there exist scalars $\chi_{ij}$ such that for all $A \in \m M_d$ it is
+\begin{align*}
+\mathcal{E}(A) = \sum_{i,j=1}^{d^2} \chi_{ij} E_i A E_j^*.
+\end{align*}
+The matrix $\chi \eqqcolon \chi^{\m E}$ is called the $\chi$-matrix of the map $\m E$.{}
+\end{definition}
+Consider the important special case, where $\m E$ is a quantum channel (or at least completely positive), i.e., it has a Kraus decomposition $\m E = \sum_i K_i \cdot K_i^*$. In this case, the $\chi$-matrix can be constructed in the following way\footnote{Of course, the $\chi$-matrix can also be explicitly constructed for any other linear map.}: Any $A_i \in \m M_d$ can be written as $
+    A_i = \sum_j a_{ij}E_j \text{ where }a_{ij}=\trr{E_j^*A_i}$. Then
+\begin{align}
+\mathcal{E} &= \sum_{i=1}^{\text{rk}(C_{\m E})} \sum_{j,l} a_{ij} \bar{a}_{il} E_j \cdot E_l^* = \sum_{j,l=1}^{d^2} \underbrace{\left( \sum_{i=1}^{\text{rk}(C_{\m E})} a_{ij} \bar{a}_{il} \right)}_{= \chi_{jl}} E_j \cdot E_l^*\label{eq:chi}
+\end{align}
+
+\begin{prop}
+Different Kraus representations of the same channel yield the same $\chi$-matrix, so that the $\chi$-matrix of a channel is well-defined.
+\end{prop}
+\begin{proof}
+Let $\{K_j\}_j$ and $\{\tilde{K}_k\}_k$ be two distinct sets of Kraus operators for the channel $\mathcal{E}$. By the unitary freedom of Kraus operators, see theorem \ref{thm:kraus} iv), there exists a unitary matrix $U$ such that $
+K_j = \sum_k U_{jk} \tilde{K}_k$. Now, expand both sets of Kraus operators in the same orthonormal basis $\{E_m\}$: $
+K_j = \sum_m a_{jm} E_m$ and $ \tilde{K}_k = \sum_m \tilde{a}_{km} E_m$.
+Substituting this into the unitary relation between the different Kraus operators yields:
+\begin{align*}
+\sum_m a_{jm} E_m = \sum_k U_{jk} \left( \sum_m \tilde{a}_{km} E_m \right) = \sum_m \left( \sum_k U_{jk} \tilde{a}_{km} \right) E_m
+\end{align*}
+Since $\{E_m\}_m$ forms a basis, the coefficients on both sides must be equal: $
+a_{jm} = \sum_k U_{jk} \tilde{a}_{km}$. Using this together with the definition of the $\chi$-matrix yields
+\begin{align*}
+\chi_{mn} &= \sum_j \left( \sum_k U_{jk} \tilde{a}_{km} \right) \left( \sum_l \bar{U}_{jl} \bar{\tilde{a}}_{ln} \right) 
+= \sum_{k,l} \tilde{a}_{km} \bar{\tilde{a}}_{ln} \left( \sum_j U_{jk} \bar{U}_{jl} \right)\\  &= \sum_{k,l} \tilde{a}_{km} \bar{\tilde{a}}_{ln}\underbrace{(U^T \bar{U})_{kl}}_{=\delta_{kl}} =\sum_k \tilde{a}_{km} \bar{\tilde{a}}_{kn} = \tilde \chi _{mn}.
+\end{align*}
+\end{proof}
+In general, the concatenation of channels does not correspond to the concatenation of the $\chi$-matrices (as is the case with the natural matrix representation). Furthermore, there are no simple criteria for determining whether a given matrix is the $\chi$-matrix of some quantum channel (as is the case with the Choi matrix). At least there is the following property of $\chi$-matrices:
+
+\begin{prop}[\cite{heinosaariMathematicalLanguageQuantum2011} 4.45]
+    Let $\m E \in \m B(\m M_d)$ be a linear map between matrix spaces and $\chi^{\m E}$ be its $\chi$-matrix. Then the following relations hold:
+    \begin{enumerate}
+        \item $\chi^{\m E} \geq 0 \Leftrightarrow$ $\m E$ is completely positive.
+        \item $\m E$ is trace-preserving $\Rightarrow$ $\trr{\chi} = d$. The converse direction is, in general, not true.
+    \end{enumerate}
+\end{prop}
+\begin{proof}
+\begin{enumerate}
+\item Let $\m E$ be completely positive, then using equation \eqref{eq:chi} yields for all $v \in \mathbb{C}^{d^2}$:
+\begin{align*}
+    \bra v \chi \ket v   &= \sum_{j,l} \bar{v}_j \chi_{jl} v_l 
+    = \sum_{j,l} \bar{v}_j \left( \sum_{i=1}^{\text{rk}(C_{\m E})} a_{ij} \bar{a}_{il} \right) v_l \\
+    &= \sum_i \left( \sum_j a_{ij} \bar{v}_j \right) \overline{\left( \sum_l {a}_{il} \bar{v}_l \right) }\geq 0.
+\end{align*}
+Conversely, assume $\chi \ge 0$. By the spectral theorem there is a diagonalization $\chi_{ij} = \sum_k C_{ik} \lambda_k \bar{C}_{jk}$ with non-negative eigenvalues $\lambda_k \ge 0$. Define $K_k := \sum_i \sqrt{\lambda_k} C_{ik} E_i$. Substituting this decomposition back into the general expansion $\mathcal{E}(A) = \sum_{i,j} \chi_{ij} E_i A E_j^*$ yields $
+    \mathcal{E}(\rho) = \sum_k K_k \rho K_k^*$. Thus, $\m E$ is completely positive.
+\item 
+Computing the trace yields
+\begin{align*}
+    \text{tr}[\chi^{\m E}] &= \sum_j \sum_{i=1}^{\rk(C_{\m E})} a_{ij} \bar{a}_{ij} = \sum_{i,j} \text{tr}[E_j^* A_i] \text{tr}[E_j A_i^*] = \sum_{i,j} \langle E_j, A_i \rangle_\text{HS} \overline{\langle E_j, A_i \rangle}_\text{HS} \\
+    &= \sum_{i,j} \langle A_i, E_j \rangle_\text{HS} \langle E_j, A_i \rangle = \sum_i \langle A_i, A_i \rangle_\text{HS} = \sum_i \text{tr}[A_i^* A_i] \quad \\
+    &= \text{tr}[\1] = d.\footnotemark
+\end{align*}\footnotetext{There is a minor printing error in the proof of proposition 4.45 in \cite{heinosaariMathematicalLanguageQuantum2011}, where it says H-S instead of HS for the Hilbert-Schmidt norm.}
+To see that the converse of ii) is, in general, false, consider the following example: Define a completely positive map on two-dimensional spaces by the single Kraus operator 
+\begin{align*}
+K = \begin{pmatrix} \sqrt{2} & 0 \\ 0 & 0 \end{pmatrix}
+\end{align*}
+
+Because the map is defined via a Kraus operator, it is completely positive, ensuring its $\chi$-matrix is positive semi-definite. The trace of the process matrix is equal to the sum of the Hilbert-Schmidt norms of the Kraus operators:
+\begin{align*}
+    \text{tr}[\chi] &= \text{tr}[K^* K] = \text{tr}\left[ \begin{pmatrix} 2 & 0 \\ 0 & 0 \end{pmatrix} \right] = 2 = d
+\end{align*}
+Thus, the scalar trace condition is perfectly satisfied. However, the exact operator condition for trace-preservation requires $\sum_k K_k^* K_k = \1$. In this case, $K^* K \neq \1$. Applying this channel to the pure state $|1\rangle\langle 1|$ yields the zero matrix, which has a trace of 0. Because the channel destroys probability, it is not trace-preserving, despite satisfying $\text{tr}[\chi] = d$.
+
+\end{enumerate}
+\end{proof}
+
+
+\begin{prop}[Matrix representation $\leftrightarrow$ $\chi$, section 4.4.2 in \cite{heinosaariMathematicalLanguageQuantum2011}]
+    Let $\m E$ be a quantum channel, $\{E_i\}_i$ be an orthonormal basis, and $\hat{\m E}$ and $\chi_{\m E}$ the natural matrix and $\chi$-matrix with respect to $\{E_i\}_i$, respectively. The following relation holds true:
+\begin{align*}
+\mathcal{E}_{jk} &= \sum_{r,s} M_{jk,rs} \chi_{rs} \text{ where }M_{jk,rs} \coloneqq \text{tr}[E_j^* E_r E_k E_s^*].
+\end{align*}
+\end{prop}
+\begin{proof}
+Remember that $\mathcal{E}_{jk} = \text{tr}[E_j^* \mathcal{E}(E_k)]$. 
+Next, we substitute the standard action of the channel expanded via the $\chi$-matrix representation, $\mathcal{E}(\rho) = \sum_{r,s} \chi_{rs} E_r \rho E_s^*$, using the basis element $E_k$ as the input state:
+\begin{align*}
+\mathcal{E}_{jk} &= \text{tr}\left[ E_j^* \left( \sum_{r,s} \chi_{rs} E_r E_k E_s^* \right) \right]
+\end{align*}
+By leveraging the linearity of the trace, we pull the summation and the scalar coefficients $\chi_{rs}$ outside of the trace operation:
+\begin{align*}
+\mathcal{E}_{jk} &= \sum_{r,s} \chi_{rs} \text{tr}[E_j^* E_r E_k E_s^*] = \sum_{r,s} M_{jk,rs} \chi_{rs},
+\end{align*}
+which yields the desired relation.
+\end{proof}
+\begin{prop}\label{prop:norm-chi}[Norm of the $\chi$-matrix]Let $\chi^{\m E}$ be the $\chi$-matrix of a quantum channel $\m E \in C_d$, then $1\leq \norm\chi_F \leq d$.
+\end{prop}
+\begin{proof}
+By definition, $\chi \ge 0$ and $\text{tr}[\chi] = d$. Thus, its $d^2$ non-negative eigenvalues $\lambda_i$ sum to $d$, and its squared Frobenius norm is given by $\|\chi\|_F^2 = \sum_i \lambda_i^2$.
+
+For the upper bound, the sum of squares is naturally bounded by the square of the sum:
+\begin{align*}
+    \|\chi\|_F^2 &\le \left( \sum_i \lambda_i \right)^2 = d^2.
+\end{align*}
+Equality holds if and only if exactly one eigenvalue is $d$ and the rest are $0$.
+
+For the lower bound, the sum of squares is minimized when all eigenvalues are uniformly distributed ($\lambda_i = \frac{1}{d}$):
+\begin{align*}
+    \|\chi\|_F^2 &\ge \sum_{i=1}^{d^2} \left(\frac{1}{d}\right)^2 = d^2 \left(\frac{1}{d^2}\right) = 1.
+\end{align*}
+Equality holds if and only if $\lambda_i = \frac{1}{d}$ for all $i$. Taking the square root of both extreme cases yields $1 \le \|\chi\|_F \le d$.
+\end{proof}
+\begin{prop}[Relation between the norms of the matrix representations]\label{prop:relation-norms}
+Let $\m E = \sum_i K_i \cdot K_i^* \in C_d$ be a quantum channel and $\hat{\m E}$ and $\chi^{\m E}$ the respective natural matrix and $\chi$-matrix representation with respect to the same orthonormal basis. The Choi matrix is, as usual, denoted by $C_{\m E}$. Then the following relation holds true:
+\begin{align*}\norm{C_{\m E}}_F = \norm{\hat{\m E}}_F = \norm {\chi^{\m E}}_F = \sum_{ij}\vert \trr{K_i^* K_j}\vert^2.
+\end{align*}
+\end{prop}
+\begin{proof}
+    The norms of the Choi matrix and the natural matrix representation are the same since the matrices are reshufflings of each other, see equation (2.22) in \cite{wolf2012quantum}. It is $\hat{\mathcal{E}} = \sum_i K_i \otimes \overline{K}_i$ and thus
+    \begin{align*}
+ \|\hat{\mathcal{E}}\|_{\text{HS}}^2 &= \text{tr}[\hat{\mathcal{E}}^* \hat{\mathcal{E}}] = \sum_{i,j} \text{tr}[(K_i^* \otimes K_i^T)(K_j \otimes \overline{K}_j)] \\
+&= \sum_{i,j} \text{tr}[K_i^* K_j] \text{tr}[K_i^T \overline{K}_j] = \sum_{i,j} |\text{tr}[K_i^* K_j]|^2
+\end{align*}
+
+Also remember $\mathcal{E}(\rho) = \sum_{i,j} \chi_{ij} E_i \rho E_j^*$, so $\hat{\mathcal{E}} = \sum_{i,j} \chi_{ij} (E_i \otimes \overline{E}_j)$, which implies
+
+\begin{align*}
+\|\hat{\mathcal{E}}\|_{\text{HS}}^2 &= \sum_{i,j,k,l} \chi_{ij}^* \chi_{kl} \text{tr}[E_i^* E_k] \text{tr}[\overline{E}_j^* \overline{E}_l] = \sum_{i,j} |\chi_{ij}|^2 = \|\chi\|_{\text{HS}}^2.
+\end{align*}
+\end{proof}
+\section{Possible properties of quantum channels}
+\subsubsection{Contractivity}
+\begin{comment}
+\begin{definition}[\cite{Kitaev1997}]
+Let $\m E \in \m B(\m M_d, \m M_{d'})$  be a linear map between matrix spaces. The induced and diamond norm of $\m E$ are defined as
+\begin{align*}
+\|\m E\|_1 := \sup \left\{ \|\m E(X)\|_1 : \|X\|_1 \leq 1 \right\} \text{ and }
+\|\m E\|_\diamond := \sup_{n \in \mathbb{N}} \|\m E \otimes \text{id}_n\|_1,
+\end{align*}
+respectively. $\m E$ is said to be completely bounded if it has a finite diamond norm: $\norm{ \m E}_\diamond < \infty$.
+\end{definition}
+That is, the induced norm is simply the operator norm with respect to the trace norms on the respective spaces.
+\begin{lemma}[Lemma 3.2.1 in \cite{wolf2023mathematical}]
+Let $\mathcal{E} \in \m B(\m M_d, \m M_{d'})$ be completely bounded.
+\begin{enumerate}
+    \item[(i)] $\norm*{\mathcal{E}}_1 = \sup \left\{ \norm*{\mathcal{E}(|\varphi\rangle\langle\psi|)}_1 \mid \norm*{\varphi} = \norm*{\psi} = 1 \right\}$
+    \item[(ii)] If $\m E$ preserves the adjoint, then $\norm*{\mathcal{E}}_\diamond = \sup_{n \leq d} \sup_{\norm*{\varphi}=1} \norm*{(\mathcal{E} \otimes \text{id}_n)(|\varphi\rangle\langle\varphi|)}_1$
+    \item[(iii)] If $\mathcal{E}$ is completely positive, then $\norm*{\mathcal{E}}_\diamond = \norm*{\mathcal{E}}_1 = \sup_{\norm*{\varphi}=1} \text{tr}[\mathcal{E}(|\varphi\rangle\langle\varphi|)]$
+    \item[(iv)] $\norm*{\mathcal{E}}_\diamond \le d \norm*{\mathcal{E}}_1$
+\end{enumerate}
+\end{lemma}
+By statement (iii) from the lemma above, the induced and diamond norm of a quantum channel are equal to one. \textcolor{red}{mention relation to lipschitz constant}
+
+\textcolor{red}{do i even need the stuff before wrt 1 norm and not states?}
+\end{comment}
+
+\begin{definition}
+    Let $\m E \in C_d$ be a quantum channel, then its contraction coefficient with respect to density operators is defined as 
+    \begin{align*}
+        c_2(\m E) = \sup_{\rho,\sigma \in \m D(\C^d)}\frac{\norm{\m E(\rho - \sigma)}_2}{\norm{\rho - \sigma}_2}
+    \end{align*}
+\end{definition}
+Note that one can write
+\begin{align}
+    \rho = \frac{\1}{d}+\underbrace{(\rho-\frac{\1}{d})}_{\eqqcolon X_\rho \in \m T},\label{eq:trace-less}
+\end{align}
+where $X_\rho$ is the trace-less part of $\rho$ and $\m T\coloneqq \{A=A^*:\trr{A} = 0\}$ the space of Hermitian trace-less matrices. With this, $c_2$ is equivalently the contraction on this trace-less subspace:
+\begin{prop}\label{prop:contraction-traceless}
+    For all $\m E \in C_d$ it is 
+    \begin{align*}
+        c_2(\m E) = \sup\left\{ \frac{\norm{\m E(A-B)}_2}{\norm{A-B}_2}: A,B \in \m T\right\}.
+    \end{align*}
+\end{prop}
+\begin{proof}
+    Call the right-hand side of the equation in the proposition (1). By using equation \eqref{eq:trace-less} one has that 
+    \begin{align*}
+        c_2(\m E) = \sup\left\{ \frac{\norm{\m E(A-B)}_2}{\norm{A-B}_2}: A,B \in \m T\cap \m D(\C^d)\right\}\eqqcolon (2)
+    \end{align*}
+     Let $A \in \mathcal{{T}}$, so $A = \sum_i \lambda_i \pr{\lambda_i} $ with $\sum_i \lambda_i = 0$, and $\1/d+ A = \sum_i \left( \1/d + \lambda_i \right) \pr{\lambda_i}$. Hence, there is an $\epsilon > 0$, so that $1/d + \epsilon \lambda_i\geq 0$ for all $i$, making $\1/d + \epsilon A \geq 0$. Since $\m E$ is linear, one may add such an $\epsilon$ in both the denominator and numerator and then add and subtract $\1/d$.
+\end{proof}
+
+
+\subsubsection{Spectral Properties}
+Note that the set of quantum channels $C (\C^d, \C^{d'})$ is convex, closed and bounded. By Caratheodory's theorem, any quantum channel $\m E \in C_d$ can be written as a (pointwise) convex combination of $d^^4 - d^2 +1$ quantum channels. For mixed unitary channels this number furthermore decreases ot $d^4-2d^2+2$, see for exmample proposition 4.4 in \cite{watrousTheoryQuantumInformation2018}.
+
+To investigate the spectral properties, consider a linear map $\m E:\m M_d \rightarrow \m M_d$. If $T$ is Hermiticity-preserving, then all eigenvalues come in complex conjugated pairs: $\m E(X) = \lambda X$ and $\m E(X^*)=\overline{\m E(X)}=\overline{\lambda}X^*$. There is the following relation between the spectrum of a map and its dual:
+\begin{prop}Let $\m E:\m M_d\rightarrow \m M_d$ be linear, then $\sigma(T)=\overline{\sigma(T^*)}$
+\end{prop}
+\begin{proof}Follows from 
+$\det(\lambda \1 - \m E)=\overline{\det(\overline \lambda \ 1 -\m E^*)}{=}0$
+\end{proof}
+\begin{prop}[Spectral radius of positive maps, see e.g. in proposition 6.1 in \cite{wolf2012quantum}]
+    Let $\m E:\m M_d \rightarrow \m M_d$ be linear and positive, then $r(\m E) = \sup_{\lambda \in \sigma(\m E)}|\lambda| \leq \norm{\m E(\1)}_\text{op}$. If $\m E$ is trace-preserving or unital, then there exists an eigenvalue with absolute value one.
+\end{prop}
+In particular, the eigenvalues of quantum channels lie on the unit circle in the complex plane.
+
+\subsubsection{Fixed points and possible properties of channels}
+\begin{definition}[Stationary state]
+    A state $\rho \in \mathcal{D}(\mathbb{C}^d)$ is called stationary with respect to a quantum channel $\m E$ if it is a fixed point, meaning $\m E(\rho) = \rho$.
+\end{definition}
+Because the set of density matrices forms a compact and convex subset within the real vector space of Hermitian matrices, Brouwer's fixed-point theorem guarantees that every quantum channel possesses at least one stationary state.
+\begin{definition}[Ergodic, Faithful and Primitive Channels]\label{def:primitive-etc}
+A quantum channel $\m E \in C_d$ is called ergodic if it has only one unique stationary state and faithful if that stationary state is strictly positive. It is called primitive if for all states $\rho \in \m D(\C^d)$ the following holds true: $\lim_{n\rightarrow \infty} \m E^n(\rho) = \sigma>0$. That is, the power series of the channel converges to a replacement channel onto a strictly positive state.
+\end{definition}
+Primitive channels have a trivial peripheral spectrum, meaning that there is only one eigenvalue of absolute value one. And the definition of primitivity is equivalent to the existence of any finite power $n \in \N$ for which $\m E^n(\rho)>0$ is strictly positve for all states $\rho$, see for example theorem 6.7 in \cite{wolf2012quantum}.
+
+Interestingly, primitive channels are dense in the set of all channels: Consider a channel $\m E \in C_d$, then the sequence $(\m E_n)_{n\ in\n}$ defined via $\m E_n(X)\coloneqq (1-1/n)\m E(\rho) + \1/(nd)$ converges to $\m E$ in operator norm. The $\m E_n$ are primitive since already
+\begin{align*}
+    \mathcal{E}_n(\rho) &= \underbrace{\frac{1}{n} \frac{\1}{d}}_{> 0} + \underbrace{\left(1 - \frac{1}{n}\right) \mathcal{E}(\rho)}_{\ge 0} > 0.
+\end{align*}
+
+Primitive quantum channels are ergodic: Assume $\mathcal{E}$ not ergodic, i.e. $\mathcal{E}(\rho_i) = \rho_i$ for $i \in \{1,2\}$, then $
+    \lim_{n \to \infty} \mathcal{E}^n(\rho_1) = \rho_1$ and $\lim_{n \to \infty} \mathcal{E}^n(\rho_2) = \rho_2 \quad \lightning$, which is a contradiction. 
+
+
+\subsubsection{Exemplary Channels}
+
+\begin{definition}
+    Let $\m E \in C_d$ be a quantum channel. $\m E$ is
+    \begin{enumerate}
+        \item a replacement channel onto a density matrix $\sigma \in \m D(\C^d)$ if $\m E(\cdot) =\trr{\cdot}\sigma$. In this case, one writes $\m E \eqqcolon \m R_\sigma$,
+        \item a unitary channel if $\m E = U \cdot U^*$ for a unitary matrix $U \in \m U(d)$ and a mixed unitary if it is a convex combination (defined pointwise) of unitary channels. A mixed Heisenberg-Weyl channel is a mixed unitary channel where the unitaries are Heisenberg-Weyl operators,
+        \item a Schur\footnote{Also called Hadamard channel.} channel if there is a matrix $A \in M_d$ so that $ \m E(\cdot) = A *\cdot$,
+        \item a pinching channel if there is a PVM $\{\Pi_i\}_i$ so that $\m E(\cdot ) = \sum_i \Pi_i \cdot \Pi_i$
+        \item The depolarizing channel $
+    \m C(\C^d)\ni \Phi_p =(1-p)\id + p \m R_{\1/d}$
+    for some $p\in[0,1]$. The channel $\Phi_1$ is called the completely depolarizing channel.The depolarizing channel $\m C(\C^d)\ni \Phi_p =(1-p)\id + p \m R_{\1/d}$ for some $p\in[0,1]$. The channel $\Phi_1$ is called the completely depolarizing channel.
+    \item The two quantum channels 
+        \begin{align}
+            \m E_\pm :\m M_d \rightarrow \m M_d, \ X \mapsto \frac{\tr[X]\1 \pm X^T}{d\pm 1}
+        \end{align}
+        are called the Werner-Holevo channels \cite{Werner2002}. They are self-dual, that is, $T_\pm ^* = T_\pm$.
+        \item 
+A channel $\mathcal{E}$ describes phase-damping if the $(\mathcal{E}^n)_{n \in \N}$ converges to
+\begin{align*}
+    \operatorname{diag}_{\{e_i\}_i} : X \mapsto \sum_i \bra{e_i}X\ket{e_i} \ket{e_i}\bra{e_i}
+\end{align*}
+for some basis $\{e_i\}_i$. The set $\{e_i\}_i$ is called the decoherence basis.
+
+    \end{enumerate}
+\end{definition}
+
+The depolarizing channel is unital and its Choi matrix $C_{\Phi_p} = (1-p)\pr \Omega + p\1/d$ is isotropic. It is in self-dual and to find its Kraus operators one first needs the following lemma:
+
+\begin{lemma}
+Let $\Z_d \coloneqq \{0, \dots, d-1\}$ and $\{W_{kl}\}_{\Z_d^{\times 2}}$ the Heisenberg-Weyl matrices, then
+    \begin{align*}
+        \sum_{k,l \in \Z_d^{\times 2}}W_{kl}\rho W_{kl}^* = d\trr{\rho}\1
+    \end{align*}{}
+\end{lemma}
+\begin{proof}
+    Use the fact that the $d^2$ Heisenberg-Weyl matrices form an orthogonal basis for the space of $d \times d$ complex matrices under the Hilbert-Schmidt inner product: $
+\text{tr}[W_{kl}^* W_{mn}] &= d \delta_{km} \delta_{ln}$.
+\end{proof}
+From this follows that the Kraus operators of the depolarizing channel are $K_0 = \sqrt{1-p+p/d^2}\1$ and $K_{kl}=\sqrt{p}K_{kl}/d$ for all $(k,l) \in \Z_d^{\times 2}\textbackslash \{(0,0)\}$.
+\begin{prop}The depolarizing channel forms a a quantum dynamical semigroup in the following way: 
+    $\{\Phi_{1-\e^{-t}}\}_{t\geq 0}$. From this also follows that $\Phi_p^n = \Phi_{1-(1-p)^n}$ for all $n\in \N$.{}
+\end{prop}
+\begin{proof}
+Note that $\Phi_0 = \id$ and $(\Phi_s\circ\Phi_t)(\rho) = (1-t)(1-s)\rho + ((1-t)s+t)\1/d$. Hence $
+        (\Phi_s\circ \Phi_t)(\rho) =  \e^{-(t+s)}\rho + (1-\e^{-(s+t)})\1/d$.
+\end{proof}
+
+
+
+\begin{lemma}\label{lem:heisenberg-choi}
+    The Choi matrix of a mixed Heisenberg-Weyl channel $\m E = \sum_{kl}p_{kl}W_{kl}\cdot W_{kl}^*$ is a Bell-diagonal matrix $C_{\m E} = \sum_{kl} p_{kl}(\1 \otimes W_{kl})\pr\Omega (\1 \otimes W_{kl}^*) = \sum_{kl}p_{kl}\pr{\psi_{kl}}$
+\end{lemma}
+
+

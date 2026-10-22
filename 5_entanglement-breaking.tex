@@ -1,0 +1,223 @@
+\chapter{Entanglement-Breaking Quantum Channels}
+\label{chap:4_entanglement}
+
+
+
+
+\subsubsection{Basics}
+
+\begin{definition}[Entanglement breaking channel \cite{Horodecki2003}]\label{def:eb}
+    Let $T \in \m C(\C^{d_A},\C^{d_B})$ be a quantum channel. It is entanglement-breaking if for all dimensions $d\in \N$ and states $\rho \in \m D(\C^d \otimes \C^{d_A})$ it holds true that $(\id_d\otimes T)(\rho)$ is separable. $T$ is said to have Holevo or measure-and-prepare form if there are density matrices $\sigma_k \in \m D(\C^{d_B})$ and a POVM $\{M_k\}_k$ on $\C^{d_A}$ so that $T(\cdot) = \sum_k \trr{M_k \cdot }\sigma_k$. The set of entanglement-breaking quantum channels $T\in \m C(\C^{d_A},\C^{d_B})$ will be denoted by $\text{EB}(\C^{d_A},\C^{d_B})$, $\text{EB}_d \coloneqq \text{EB}(\C^d)\coloneqq \text{EB}(\C^{d},\C^{d})$.
+\end{definition}\noindent
+Again, the order of the tensor product does not matter in this definition. By using the spectral decomposition, the density matrices and POVM effects can always be chosen to be rank-one (although the effect operators of the POVM may be multiples of each other.)
+A closely related concept is that of an entanglement-annihilating channel, which destroys any entanglement within the system it acts on:
+\begin{definition}[Entanglement-annihilating channel \cite{moravcikovaEntanglementannihilatingEntanglementbreakingChannels2010}]
+    A quantum channel $\m E \in \m C_d$ is entanglement-annihilating if $\m E(\rho) $ is separable for all states $\rho \in \m D(\C^d)$.
+\end{definition}
+Clearly, a channel $\m E$ is entanglement-breaking if and only if $\id \otimes \m E$ is entanglement-annihilating.
+
+An obvious example of a channel that is not entanglement-breaking is the identity channel $T=\id: \rho \mapsto \rho$ since then $(\id \otimes T)(\rho)$ is entangled whenever $\rho$ is.
+
+\begin{lemma}
+    A channel $T$ in Holevo form $T(\cdot) = \sum_k \trr{M_k \cdot }\rho_k$ has Kraus operators $K_{kmn}=\sqrt{\sigma_k}\ket m \bra n\sqrt{M_k}$ and Choi matrix $C_T = \sum_k M_k^\text T\otimes \sigma_k$. 
+\end{lemma}
+\begin{proof}
+    \begin{align*}
+\sum_{kmn} A_{kmn} \rho A_{kmn}^* &= \sum_{kmn} \sqrt{\sigma_k} |m\rangle\langle n| \sqrt{M_k} \rho \sqrt{M_k} |n\rangle\langle m| \sqrt{\sigma_k} \\
+&= \sum_{km} \sqrt{\sigma_k} |m\rangle \text{Tr}[M_k \rho] \langle m| \sqrt{\sigma_k} = \sum_k \text{Tr}[M_k \rho] \sigma_k
+\end{align*}
+\end{proof}
+
+The main result from \cite{Horodecki2003} is the following characterization of entanglement-breaking channels:
+\begin{theorem}[\cite{Horodecki2003}, theorem 4]
+    Let $\m E \in \m C(\C^{d_A},\C^{d_B})$ be a quantum channel, then the following statements are equivalent:
+    \begin{enumerate}
+        \item $\m E$ has Holevo form.
+        \item $\m E$ is entanglement-breaking.
+        \item The Choi matrix $C_{\m E}$ is separable.
+        \item All Kraus operators of $\m E$ are rank-one.
+        \item For all positive maps $\gamma$,  $\gamma \circ \mathcal{E}$ is completely positive.
+        \item For all positive maps $\gamma$,  $\m E\circ\gamma$ is completely positive.
+    \end{enumerate}
+\end{theorem}
+\begin{proof}
+i) $\Rightarrow$ ii):
+\begin{align*}
+    (\text{id} \otimes \mathcal{E})(\rho) &= \sum_k (\text{id} \otimes \sigma_k) ( \text{id} \otimes \text{Tr}(M_k \cdot) ) (\rho) = \sum_k \text{tr}_2 \left[ (\text{id} \otimes M_k) \rho \right] \otimes \sigma_k \\
+    &= \sum_k \gamma_k A_k \otimes \sigma_k,
+\end{align*}
+where $\gamma_k := \text{tr}[M_k \rho] \geq 0$, $\sum_k \gamma_k = 1$, and $A_k := \text{tr}_2 \left[ (\text{id} \otimes M_k) \rho \right] / \gamma_k  = \text{tr}_2[\sqrt{M_k} \rho \sqrt{M_k}]/\gamma_k\geq 0$,
+implying that $(\text{id} \otimes \mathcal{E})\rho$ is separable.\\
+ii) $\Rightarrow$ iii): trivial
+iii) $\Rightarrow$ i):
+\begin{align*}
+    (\text{id} \otimes \mathcal{E})(\ket{\Omega}\bra{\Omega}) &= \sum_{ij} (\text{id} \otimes \mathcal{E})(\ket{i}\bra{j} \otimes \ket{i}\bra{j}) \\
+    &= \sum_{ij} \ket{i}\bra{j} \otimes \mathcal{E}(\ket{i}\bra{j}) \\
+    &\overset{3)}{=} \sum_n \tilde{p}_n \sigma_n^A \otimes \sigma_n^B = \sum_n p_n \ket{v_n}\bra{v_n} \otimes \ket{w_n}\bra{w_n}
+\end{align*}
+for suitably chosen normalized $\ket{v_n}, \ket{w_n}$ and $\sum p_n = 1$. Consequently, one has
+\begin{align*}
+    T(\rho) &= \text{tr}_1[C (\rho^T \otimes \1)] = \sum_n p_n \text{tr}_1 \left[ \ket{v_n}\bra{v_n} \rho^T \otimes \ket{w_n}\bra{w_n} \right] \\
+    &= \sum_n p_n \bra{v_n} \rho^T \ket{v_n} \ket{w_n}\bra{w_n} = \sum_n p_n \bra{\bar{v}_n} \rho \ket{\bar{v}_n} \ket{w_n}\bra{w_n} \\
+    &= \sum_n \text{tr} \left[ \rho \, p_n \ket{\bar{v}_n}\bra{\bar{v}_n} \right] \ket{w_n}\bra{w_n}.
+\end{align*}
+Now, i) - iii) are equivalent. iii) $\Rightarrow$ iv): Since
+\begin{align*}
+    \mathcal{E}(\rho) &= \sum_n \ket{w_n}\bra{w_n} \text{Tr}[p_n \rho \ket{v_n}\bra{v_n}] = \sum_n p_n \ket{w_n}\bra{w_n} \bra{v_n} \rho \ket{v_n} \\
+    &= \sum_n p_n \ket{w_n}\bra{v_n}\rho \ket{v_n}\bra{w_n},
+\end{align*}
+the Kraus operators $K_n \coloneqq \sqrt{p_n}\ket{w_n}\bra{v_n}$ are rank-one.\\
+iv) $\Rightarrow$ i):
+\begin{align*}
+    \mathcal{E}(\rho) &= \sum_k A_k \rho A_k^* = \sum_k \gamma_k \ket{v_k}\bra{w_k} \rho \ket{w_k}\bra{v_k} = \sum_k \text{Tr}[\gamma_k \rho \ket{w_k}\bra{w_k}] \ket{v_k}\bra{v_k}
+\end{align*}
+ii) $\Leftrightarrow$ v): Theorem \ref{thm:positive-maps} states that $\rho \text{ separable } \Leftrightarrow \forall \text{ positive } \gamma : (\text{id} \otimes \gamma)(\rho) \ge 0$ holds true for all states $\rho$. Now, one only needs to use that a channel is entanglement-breaking if and only if its Choi matrix is separable.\\
+v) $\Leftrightarrow$ vi) 
+Assume v) holds and let $\gamma$ be a positive map. By assumption, the composition $\gamma \circ \mathcal{E}$ is completely positive. Taking the adjoint preserves complete positivity, so that $
+    (\gamma \circ \mathcal{E})^* = \mathcal{E}^* \circ \gamma^* $. Since $\gamma$ is positive, its adjoint $\gamma^*$ is also positive. Thus, for any positive map $\gamma^*$, the composition $\mathcal{E}^* \circ \gamma^*$ is completely positive. Because a channel is entanglement-breaking if and only if its adjoint is entanglement-breaking (as transposition preserves the separability of the Choi matrix), applying this reasoning to $\mathcal{E}$ directly yields vi).
+
+\end{proof}
+Point iii) of the theorem above implies that one only needs to check for the dimension $d_B$ in the identity $\id_d$ in the definition \ref{def:eb} of entanglement-breaking channels. An example of an entanglement-breaking channel is $\m E \in C_d, \rho \mapsto \trr{\rho}\1_{d'}/d'$ since its Choi matrix is $C_{\m E} = \1_d \otimes \1_{d'}$.
+\begin{ex}\label{ex:depol-eb}
+    The depolarizing channel $\Phi_p$ is entanglement-breaking if and only if $p\geq d/(d+1)$.
+\end{ex}
+\begin{proof}
+The Choi matrix of the depolarizing channel is isotropic, for which separability is equivalent to the PPT condition. Parameterizing the channel as $\Phi_p(\rho) = (1-p)\rho + p \text{Tr}[\rho]\frac{\1}{d}$, its unnormalized Choi matrix evaluates to:
+\begin{align*}
+    C_{\Phi_p} &= (1-p)\ket{\Omega}\bra{\Omega} + p \left( \1 \otimes \frac{\1}{d} \right)
+\end{align*}
+Applying the partial transpose transforms $\ket{\Omega}\bra{\Omega}$ into the swap operator $\mathbb{F}$. The minimum eigenvalue of the swap operator is strictly $-1$ (occurring on the antisymmetric subspace). Enforcing the PPT condition dictates that the minimum eigenvalue of the fully transposed Choi matrix must remain non-negative:
+\begin{align*}
+    -(1-p) + \frac{p}{d} \ge 0 \Leftrightarrow
+    p \left(1 + \frac{1}{d}\right) \ge 1 \Leftrightarrow
+    p \ge \frac{d}{d+1}
+\end{align*}
+This directly yields the exact parameter regime where the channel becomes entanglement-breaking.
+\end{proof}
+
+The Choi matrix of a channel may have a positive partial transpose, but not necessarily be separable. The corresponding channels are called completely copositive or also PPT channels sometimes:
+\begin{definition}[Complete copositivity/PPT channel]
+    Let $\m E \in \m C(\C^d,\C^{d'}) $ be a quantum channel. If its Choi matrix is PPT, $(\id_d \otimes \vartheta_{d'})(C_T)\geq 0$, then the channel is called completely copositive. The set of all completely copositive channels will be denoted by PPT$(\C^d,\C^{d'})$ and PPT$_d\coloneqq \text{PPT}(\C^d)\coloneqq \text{PPT}(\C^d,\C^{d})$.
+\end{definition}
+This is equivalent to $(\id \otimes \m E)(\rho)$ being a PPT state again, for every input.
+\begin{prop}
+    The set of entanglement-breaking channels EB$_d$ is closed under composition with other entanglement-breaking quantum channels, as well as with other arbitrary channels, making it an ideal in the semigroup of quantum channels. The same is true for the set of PPT channels.
+\end{prop}
+\begin{proof}Let $\rho \in \m D(\C^d)$ be an aribrary state, then
+    $(\id_d \otimes \Phi \circ \Psi)(\rho) =(\id_d \otimes \Phi)((\id_d \otimes \Psi)(\rho))$ is separable since $\Phi$ is entanglement-breaking. On the other hand, $(\id_d \otimes \Psi \circ \Phi)(\rho)$ is separable since product channels like $\id_d \otimes \Psi$ preserve separability. Similar reasoning proves the statement about PPT channels.
+\end{proof}
+
+The following conjecture was stated in \cite{christandl2012ppt}:
+\begin{conjecture}[PPT$^2$ conjecture]. For any PPT quantum channel $\m E \in \text{PPT}_d$, its square is entanglement-breaking: $\m E^2 \in \text{EB}_d$.
+\end{conjecture}
+The PPT$^n$ conjecture is accordingly about $n$-time compositions. Of course, the trace-preservation of $\m E$ is irrelevant for the conjecture, so that it may be equivalently formulated for completely positive maps.
+
+
+
+There is the following simple necessary channel for a channel to be entanglement-breaking:
+\begin{lemma}\label{lem:rank}
+    Let $\m E \in \m C_d$ be a quantum channel. If $\rk(C_{\m E}) < d$, then $C_T$ is entangled.
+\end{lemma}
+\begin{proof}
+    Note that $C_{\m E}^\text{A} = \tr_\text{B}[C_{\m E}] = \1$, so that $\rk(C_{\m E}^\text{A}) = d$. Thus by proposition \ref{prop:rank-condition} it is $\rk(C_T) > d$.
+\end{proof}
+\begin{prop}[Necessary Kraus rank, theorem 6 in \cite{horodecki1999general}]
+    Let $\m E \in \m C_d$. If $\m E$ can be written with fewer than $d$ Kraus operators, i.e., $\rk(C_{\m E})<d$, then $\m E$ is not entanglement-breaking.
+\end{prop}
+\begin{proof}
+    The minimal number of required Kraus operators is the rank of the Choi matrix. Now use lemma \ref{lem:rank}.
+\end{proof}
+Unfortunately, there is no simple closed formula for the rank of the Choi matrix of a channel composition. Thus, this result does not provide an easy condition for the PPT$^n$ conjecture, for example.
+\begin{prop}
+    Let $\m E \in \m C_d$ be a quantum channel. If $\rk(C_{\m E}) = d$, then the channel $\m E$ is entanglement-breaking if and only if it is PPT.
+\end{prop}
+\begin{proof}
+ Using proposition \ref{prop:low-rank} for the Choi matrix of the channel yields the statement.
+\end{proof}
+
+\subsubsection{Entanglement-Breaking Indices and Times}
+Since entanglement-breaking channels are closed under composition with other quantum channels, in particular themselves, it may be interesting to investigate the smallest number of compositions needed for a channel to become entanglement-breaking (if that is the case). This concept was first investigated in \cite{lamiEntanglementBreakingIndices2015}. To take powers of a quantum channel, the channel must clearly be mapping between the same Hilbert space.
+\begin{definition}[Entanglement-breaking index and time \cite{lamiEntanglementBreakingIndices2015, lamiEntanglementSavingChannels2016}]
+    Let $\m E \in \m C_d$ be a quantum channel and $\{\Phi_t \in \m C_d\}_{t\geq 0}$ a quantum dynamical semigroup. The entanglement-breaking index of the channel and the entanglement-breaking time of the QDS are 
+    \begin{align*}
+        n_\text{EB}(T) &\coloneqq \min\{n_0 \in \N: \forall n \in \N, n\geq n_0 :\Phi^n \in \text{EB}_d\} \text{ and }\\
+        t_\text{EB}(\Phi)&\coloneqq \inf\{t\geq 0: \forall s \geq t : \Phi_s \in \text{EB}_d \},
+    \end{align*}
+    respectively. If the above sets are empty, the respective entanglement-breaking index or time is set to $\infty$. Channels (QDSs) with a finite entanglement-breaking index (time) are called eventually entanglement-breaking. The set of eventually entanglement-breaking channels $\m E\in \m C_d$ will be denoted by EEB$_d$. If a channel is not eventually entanglement-breaking, it is entanglement-saving: $\text{ES}_d\coloneqq \m C_d $\textbackslash $\text{EEB}_d$
+    \end{definition}\noindent
+Since $t\mapsto \Phi_t$ is (strongly) continuous and EB$_d$ is closed, the entanglement-breaking time is achieved as a minimum. The entanglement-breaking indices of the elements of a QDS are closely linked to its entanglement-breaking time:
+\begin{prop}
+Let $(\Phi_t)_t$ be a QDS with entanglement-breaking time $t_\Phi$. Let $\delta \geq 0$, then the entanglement-breaking index of 
+$\Phi_\delta$ is $n(\Phi_\delta) \in [\lfloor t_\Phi / \delta \rfloor, \lceil t_\Phi / \delta \rceil]$.
+\end{prop}
+\begin{proof}
+
+Let $\Phi_\delta^n$ be entanglement-breaking, then $n\delta \geq t_\text{EB}(\Phi)$ and thus $ n \geq \lceil {t_\Phi}/{\delta} \rceil$ since $n \in \mathbb{N}$, which provides the desired upper bound for the entanglement-breaking index $n_\text{EB}(\Phi_\delta)$. On the other hand, clearly, 
+$t_\text{EB}(\Phi) \geq \lfloor \frac{t_\text{EB}(\Phi)}{\delta} \rfloor \cdot \delta$ holds true.  Consequently, $\Phi_\delta^{\lfloor t_\Phi / \delta \rfloor}$ is entanglement-breaking if and only if ${t_\Phi}/{\delta} \in \mathbb{N} \Rightarrow n_0 \geq \lfloor \frac{t_\Phi}{\delta} \rfloor$.
+\end{proof}\noindent
+A QDS is, in particular, eventually entanglement-breaking if and only if any and thus all of its elements are.
+
+\begin{ex} The entanglement-breaking index of the depolarizing map $\Phi_p$ is $n(\Phi_p) = \left\lceil - {\ln(d+1)}/{\ln(1-p)} \right\rceil$ for all $p \in\ ]0, 1[\ $, as well as $n(\Phi_0) = \infty$ and $n(\Phi_1) = 1$. 
+\end{ex}
+\begin{proof}Use example \ref{ex:depol-eb} and assume $p \in\ ]0, 1[\ $:
+\begin{align*}
+1 - (1-p)^n \ge \frac{d}{d+1} &\Leftrightarrow (1-p)^n \le 1 - \frac{d}{d+1} = \frac{d+1-d}{d+1} = \frac{1}{d+1} \\
+&\Leftrightarrow n \ge \log_{1-p} \left(\frac{1}{d+1}\right) = \frac{\ln\left(\frac{1}{d+1}\right)}{\ln(1-p)} = -\frac{\ln(d+1)}{\ln(1-p)}.
+\end{align*}
+\end{proof}
+
+
+If a channel $\m E \in \m C_d$ is not eventually entanglement-breaking, one might still consider the accumulation points of the sequence $(\m E^n)_{n\in \N}$.
+\begin{definition}[AES channels \cite{lamiEntanglementSavingChannels2016} definition 3]
+    Let $\m E \in \m C_d$ be a quantum channel. If all accumulation\footnote{Note that in \cite{lamiEntanglementSavingChannels2016} accumulation points are called limit points.} points of the sequence $(\m E^n)_{n \in \N}$ are entanglement-breaking, then $\m E$ is asymptotically entanglement-breaking. Otherwise, the channel is called asymptotically entanglement-saving. The set of asymptotically entanglement-breaking and entanglement-saving channels will be denoted by AEB$_d$ and AES$_d$, respectively.
+\end{definition}
+Interestingly, it is proven in proposition 29 of \cite{lamiEntanglementSavingChannels2016} that either all or none of the accumulation points are entanglement-breaking. The broad proof strategy is as follows: i) the set of all accumulation points forms a compact group, i.e., they are in particular invertible ii) by inverting the entanglement-breaking accumulation point, all other points can be written as a composition of this particular entanglement-breaking accumulation point and another auxiliary channel iii) use the ideal property of entanglement-breaking channels.
+
+Let it be noted that in \cite{lamiEntanglementSavingChannels2016} they also introduce the notion of universal entanglement-preserving channels (UEP), which are those channels $\m E$ for which $(\id \otimes \m E)(\rho)$ is entangled whenever $\rho$ is. Such UEP channels are shown to be equivalent to the unitary channels. Unitary channels are addiionally entanglement-saving.
+
+\subsubsection{Primitive channels}
+Primitive quantum channels provide an example of channels that are eventually entanglement-breaking. This is a well-known result, see e.g. theorem 2.1 \cite{hansonEventuallyEntanglementBreaking2020} for a stronger result, where one direction is proven similarly to the present work.
+
+If $\m E \in C_d$ is a primitive quantum channel, then by definition \ref{def:primitive-etc} it is 
+\begin{align}
+    \tilde{ \m E }\coloneqq \lim_{n \rightarrow \infty}\m E^n = \m R_\sigma \text{ where } \m D(\C^d)\ni\sigma > 0.
+\end{align}
+Hence, $C_{\tilde {\m E}}= \sum_{ij}\ket{i} \bra j \otimes \delta_{ij}\sigma = \1 \otimes \sigma$ is a product operator, so the limit $\tilde  {\m E}$ is an entanglement-breaking channel. In principle, the proof that primitive channels are eventually entanglement-breaking works by showing that the limit lies in the interior of EB$_d$ so that there must exist finite powers that come arbitrarily close to $\tilde{\m E}$ and thus also lie in $EB_d$.
+\begin{lemma}
+    A product operator $O = O_A \otimes O_B$ is in the interior of the set of separable operators if and only if $O_A$ and $O_B$ have full-rank:
+    \begin{align*}
+        O_A \otimes O_B \in \inter(\sep_{d_A d_B}) \Leftrightarrow (O_A > 0 \wedge O_B > 0)
+    \end{align*}
+\end{lemma}
+\begin{proof}
+One needs to show that there exists $\varepsilon > 0 \text{ such that } B_\varepsilon(O_A \otimes O_B) \subset \text{SEP}$. Obviously $\text{int}(\text{SEP}) \subset \text{int}(\mathcal{D}(\mathcal{H})) = \{ \text{full rank states} \}$. Hence, if $O_A \otimes O_B \in \text{int}(\text{SEP})$, then in particular $
+    O_A \otimes O_B > 0$. Given the spectral decompositions $O_A = \sum_i \lambda_i |\lambda_i\rangle\langle\lambda_i|$ and $O_B = \sum_j \mu_j |\mu_j\rangle\langle\mu_j|$, one has 
+$O_A \otimes O_B = \sum_{i,j} \lambda_i \mu_j (|\lambda_i\rangle \otimes |\mu_j\rangle)(\langle\lambda_i| \otimes \langle\mu_j|) > 0$, so that $O_A,O_B > 0$ follows from $O_A \otimes O_B > 0$. Hence, $(\Rightarrow)$ is done. Now assume that $O_A, O_B > 0$. Clearly, the identity on a bipartite system is a product matrix. Define the map
+\begin{align*}
+    \Lambda : \mathcal{B}(\mathcal{H}_{AB}) \to \mathcal{B}(\mathcal{H}_{AB}), \quad X \mapsto (O_A \otimes O_B)^{1/2} X (O_A \otimes O_B)^{1/2},
+\end{align*}
+such that $\Lambda(\1) = O_A \otimes O_B = O$. Consider the restriction $\Lambda|_{\text{SEP}}$; then $\text{Im}(\Lambda|_{\text{SEP}}) \subset \text{SEP}$ because the map is linear and preserves tensor products. By theorem 1 in \cite{gurvitsLargestSeparableBalls2002}, the identity matrix $\1$ lies in the interior of the separable cone, meaning there exists an open neighborhood $U \subset \text{SEP}$ containing $\1$. Furthermore, because $O_A, O_B > 0$, their square roots are uniquely defined and strictly invertible. This makes $\Lambda$ an invertible linear map on a finite-dimensional vector space, which guarantees that it is an open map. Consequently, $\Lambda$ maps the open set $U$ to an open set $\Lambda(U)$ containing $\Lambda(\1) = O$. Since $\Lambda(U) \subset \text{SEP}$, there exists an open neighborhood around $O$ that is entirely contained within the separable set, proving that $O \in \text{int}(\text{SEP})$.
+
+\begin{prop}
+    Primitive channels are eventually entanglement-breaking. \label{prop:primitive-eeb}
+\end{prop}
+\begin{proof}
+    Since the Choi matrix $C_{\tilde{\m E}}$ of the limit of a primitive channel $\m E$ is a product matrix, it lies in $\inter(\sep_d)$, which is an open subset of $\sep_d$. Thus, there is an $\epsilon_{\m E} > 0$, such that $B_{\epsilon} (C_{\tilde {\m E}})\in \sep_d$. By the definition of convergence, there is $N(\epsilon) \in \N$ such that for all $n> N$ it is $\norm{\m E^n- \tilde{\m E}}< \epsilon$. The Choi mapping $\m C: \m E \mapsto C_{\m E}$ is linear map, thus bounded continuous. Consequently, one has  $\norm{C_{\m E}-C_{\tilde{\m E}}} = \norm{\m C({\m E}-{\tilde{\m E}})} \leq \norm {\m C} \norm{{\m E}-{\tilde{\m E}}}$. Now, for all $n> N(\epsilon_{\m E}/\norm {\m C})$ it holds that $\norm{C_{\m E^n}-C_{\tilde{\m E}}} < \epsilon_{\m E}$ and thus $C_{\m E^n} \in \sep_d$ and $\m E^n \in EB_d$.
+\end{proof}
+
+One potentially useful observation is that to prove the $\text{PPT}^2$ conjecture, one may restrict to a dense set:
+
+\begin{prop}[Corollary 3.2 in \cite{hansonEventuallyEntanglementBreaking2020}] The $\text{PPT}^n$ conjecture holds if and only if every PPT primitive quantum channel $\m E$ has $\m E^n \in \text{EB}_d$.
+\end{prop}
+\begin{proof} Let $\m E \in \text{PPT}_d$ be a PPT quantum channel. By denseness of primitive quantum channels, there is a sequence $\m E_k \rightarrow \m E$ with each $\m E_k$ being PPT and primitive. By continuity of compositions, it is $\m E^n = \lim_{k \to \infty} \m E_k^n$. Since the set of entanglement-breaking channels is closed, $\m E^n \in \text{EB}_d$.
+\end{proof}
+By reading the proof, one readily sees that the statement holds for any dense set.
+
+\subsubsection{Other results in the literature}
+In the case of quantum dynamical semigroups, also the converse of proposition \ref{prop:primitive-eeb} holds, that is, every eventually entanglement-breaking QDS is primitive. This is shown in theorem 2.1 of \cite{lamiEntanglementSavingChannels2016}. This paper also goes further on to provide tighter bounds for the entanglement-breaking times of quantum dynamical semigroups.
+
+There are many more recent developments on the PPT conjecture.  Notably, Rahaman et al. \cite{rahamanEventuallyEntanglementBreaking2018} rigorously demonstrated that every PPT channel is eventually entanglement-breaking (Theorem 4.4). Their work further characterizes the asymptotic behavior of unital maps: While the identity map serves as a trivial counterexample preventing a universal claim, they proved that almost all unital channels are indeed entanglement-breaking (Theorem 5.2). Additionally, they established that any unital irreducible channel is asymptotically entanglement-breaking (Corollary 6.1).  In \cite{christandlWhenComposedMaps2019} proved the conjecture for dimension $d=3$ using Schmidt number techniques and formulated several equivalent conjectures that provide alternative avenues for understanding this behavior.
+
+
+
+  

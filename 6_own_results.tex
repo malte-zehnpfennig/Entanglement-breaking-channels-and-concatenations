@@ -1,0 +1,587 @@
+\chapter{Results}\label{ch:own_results}
+\section{SIC-POVMs}\label{sec:sic-povm}
+Using a certain type of matrix basis, say $\{O_i\}_i$, any output of a quantum channel $\m E$ can be expanded as $\m E(\cdot) = \sum_i c_i(\cdot) O_i$ for suitable coefficients $c_i$ that depend on the input. Remember that a quantum channel is entanglement-breaking if and only if it can be written in a measure-and-prepare form $\m E (\cdot)= \sum_i \trr{M_i \cdot }\sigma_i$, where the $\sigma_i$ are density matrices and the matrices $M_i$ form a POVM. That is, if it is possible to choose an operator basis with positive semidefinite elements, it is
+\begin{align}
+    \m E (\cdot)=\sum_i \trr{O_i}c_i(\cdot) \frac{O_i}{\trr{O_i}},
+\end{align}
+where $O_i/\trr{O_i}$ is a density matrix. Hence, $\m E$ being entanglement-breaking depends entirely on the coefficients\footnote{Well, on what else would it depend...}. Unfortunately, the basis elements being positive semidefinite forces the basis to not be Hilbert-Schmidt orthogonal:
+\begin{lemma}[SIC-POVMs, proposition 2.7 in \cite{wolf2012quantum}]\label{lem:sic}
+Let $\{P_i\}_{i=1}^n$ be a set of positive semidefinite operators in $\mathcal{M}_d$, where $d \leq n$, which are normalized with respect to the Hilbert-Schmidt scalar product, i.e., $\operatorname{tr}[P_i^2] = 1$. Then
+\begin{align*}
+    \sum_{i \neq j} |\trr{P_iP_j}|^2 \geq \frac{(n-d)^2 n}{(n-1)d^2}, 
+\end{align*}
+with equality if and only if all $P_i$ are rank-one projections fulfilling $\trr{P_i P_j} = \frac{n-d}{(n-1)d}$ for all $i \neq j$, and $\sum_i P_i = \frac{n}{d}\1$. In case of equality the $P_i$'s are linearly independent.
+\end{lemma}
+
+Consequently, if a basis of positive semidefinite operators were pairwise Hilbert-Schmidt orthogonal, then the left-hand side in the equation above would be zero, but because of $n=d^2$ the right-hand side is equal to $d^2(d-1)/(d+1)$, leading to a contradiction. 
+
+The basis case, where $n=d^2$, that achieves the equality in lemma \ref{lem:sic} leads to the following definition:
+\begin{definition}[SIC-POVM]
+A SIC-POVM is a POVM $\{M_i\}_{i=1}^{d^2}$, where each effect operator is rank-one (and thus a projection) and fulfills the symmetry condition 
+\begin{align*}
+    \trr{M_i M_j} = \frac{d \delta_{ij}+1}{d^2(d+1)}
+\end{align*}
+for all $i,j \in \{1,\dots, d^2\}$.
+\end{definition}
+That is, if $M_i$ are the effect operators of a SIC-POVM, then $P_i = dM_i$ are the matrices in lemma \ref{lem:sic}. 
+The underlying mathematics of SIC-POVMs, that is, sets of complex equiangular lines, were studied back in the 1970s in the context of design theory \cite{Delsarte1975} and brought into the context of quantum mechanics in \cite{Zauner1999}\footnote{Although they were still not called SIC-POVMs.}, where it was conjectured that SIC-POVMs exist in all dimensions (Zauner's conjecture). 
+
+\begin{lemma}\label{lem:sic}[Equation 2.33 in \cite{wolf2012quantum}] Let $\{P_i/d\}_{i=1}^{d^2}$ be a SIC-POVM. For all $X \in \m M_d$ it holds 
+\begin{align*}
+    X = \frac{1}{d}\sum_{i=1}^{d^2}[(d+1)\trr{X P_i}-\trr{X}]P_i.
+\end{align*}
+\end{lemma}
+\begin{proof}
+Since $\{P_i/d\}_i$ forms a basis, one has the following expansion:
+\begin{align*}
+    X = \sum_{i=1}^{d^2} c_i P_i,
+\end{align*}
+where $c_i$ are the coefficients. Now, take the Hilbert-Schmidt inner product of both sides with another $P_j$:
+\begin{align*}
+    \mathrm{tr}[X P_j] = \mathrm{tr}\left[ \left( \sum_{i=1}^{d^2} c_i P_i \right) P_j \right] = \sum_{i=1}^{d^2} c_i \mathrm{tr}[P_i P_j].
+\end{align*}
+Using that $
+    \mathrm{tr}[P_i P_j] = (d\delta_{ij} + 1)/(d+1)$
+yields
+\begin{align*} \label{eq:trace_pj}
+    \mathrm{tr}[X P_j] = \sum_{i=1}^{d^2} c_i  \frac{d\delta_{ij} + 1}{d+1}  = \frac{d}{d+1}c_j + \frac{1}{d+1}\sum_{i=1}^{d^2} c_i.
+\end{align*}
+Using $\trr{P_i}=1$ and taking the trace of the initial basis expansion of $X$ yields $
+    \mathrm{tr}[X] = \mathrm{tr}\left[ \sum_{i=1}^{d^2} c_i P_i \right] = \sum_{i=1}^{d^2} c_i$.
+Substitute this back into the equation from before, so that
+\begin{align*}
+    \mathrm{tr}[X P_j] &= \frac{d}{d+1}c_j + \frac{1}{d+1}\mathrm{tr}[X] \\\Leftrightarrow 
+    c_j &= \frac{1}{d} \big[ (d+1)\mathrm{tr}[X P_j] - \mathrm{tr}[X] \big],
+\end{align*}
+which concludes the proof.
+\end{proof}
+\begin{prop}[Sufficient condition via SIC-POVMs]\label{prop:sic}
+     If one exists, let $\left\{ P_i/d \right\}_{i=1}^{d^2}$ be a SIC-POVM, then the following statement holds true:
+     \begin{align*}
+        \text{For all }i \in \{1, \dots, d^2\} \text{ it is}(d+1)\mathcal{E}^*(P_i) \ge \1 \Rightarrow \m E\text{ is entanglement-breaking}
+     \end{align*}
+ If $\m E$ is measure-and-prepare with respect to the $\{d P_i\}_i$ as output states, then this condition is also necessary for entanglement-breaking.
+\end{prop}
+\begin{proof}
+    Using lemma \ref{lem:sic} yields
+    \begin{align*}
+\mathcal{E}(\rho) &= \frac{1}{d} \sum_i \left[ (d+1) \operatorname{tr}[P_i \mathcal{E}(\rho)] - \operatorname{tr}[\rho] \right] P_i \\
+&= \sum_i \operatorname{tr} \left[ \frac{d+1}{d} P_i \mathcal{E}(\rho) - \frac{1}{d} \rho \right] P_i \\
+&= \sum_i \operatorname{tr} \Bigg[ \rho \underbrace{\left( \frac{d+1}{d} \mathcal{E}^*(P_i) - \frac{\1}{d} \right)}_{\eqqcolon M_i}\Bigg] P_i.
+\end{align*}
+If the $M_i$ constitute a POVM, then $\m E$ is in measure-and-prepare form. One may verify that $\sum_i M_i = \1$. Positivity $M_i \geq 0$ is equivalent to $(d+1)\m E^*(P_i) \geq \1$.
+\end{proof}
+
+The SIC-POVM condition is in general not necessary, which may be seen by considering the following example: $\m E (\cdot) = \pr 0 \trr{\cdot}$ with adjoint $\m E^*(\cdot) = \trr{\pr {0} \cdot}\1 = \bra{0}\cdot \ket{0}\1$ (which may be verified readily by plugging in the definition). $\m E$ is clearly entanglement-breaking since its Choi matrix is separable. For the Choi matrix of the adjoint one has $C_{\m E^*} = \sum_{ij}\ket{i}\bra{j} \otimes \delta_{i0}\delta_{j0}\1 = \pr 0 \otimes \1$ is separable, so that $C_{\m E}$ is entanglement-breaking. However, the SIC-POVM condition is not fulfilled since $(d+1)\m E^*(P_i) = (d+1)\bra 0 P_i \ket 0 \1 \ngeq \1$. To see the violation of the inequality, assume that it holds. Then $\bra 0 P_i \ket 0 < 1/(d+1) \Leftrightarrow  d = \sum_{i=1}^{d^2}\bra 0 P_i \ket 0 < d^2/(d+1)$, since $\{P_i/d\}_i$ is a POVM.
+
+Note that, for higher dimensions, SIC-POVMs are generally only numerically known and calculated from so-called fiducial vectors, see \cite{Scott2010, Fuchs2017}. A numerical implementation of the SIC-POVM condition \ref{prop:sic} can be found in listing \ref{lst:code-sic}. 
+
+As an example, consider the depolarizing channel again:
+\begin{ex}[Depolarizing channel]
+Since the depolarizing channel $\Phi_p$ is self-dual, the SIC-POVM condition evaluates to
+\begin{align*}
+    (d+1)\left( (1-p)P_i + \frac{p}{d}\1 \right) &\geq \1 \Leftrightarrow (d+1)(1-p)P_i \geq  \left(1-p\frac{d+1}{d}\right)\1.
+\end{align*}
+Since $P_i$ is rank-one, its eigenvalues are one and zero (with multiplicity $d-1$). Hence, the inequality is true if and only if $1-p(d+1)/d \leq 0 \Leftrightarrow p \geq d/(d+1)$, meaning that for the depolarizing channel the condition is also necessary, see \ref{ex:depol-eb}.
+\end{ex}
+
+
+
+\section{Contraction-Coefficient and Matrix-Norm Criteria}\label{sec:result:contraction}
+In the proof that primitive channels are eventually entanglement-breaking, one uses the fact that the maximally mixed state ${\1}/{d}$ lies in the interior of the convex set of separable states. This guarantees the existence of a finite neighborhood, a separable ball of a specific radius with respect to the Hilbert-Schmidt norm, centered at the identity that consists entirely of separable states. 
+
+The primary idea of this chapter is to leverage this geometric structure to derive explicit upper bounds on the entanglement-breaking index $n_{\text{EB}}(\cdot)$. Iterated applications of a quantum channel act as a contraction on the state space. By quantifying this rate of convergence using matrix norms or contraction coefficients, one can bound the maximum distance of any output state to the maximally mixed state after $n$ compositions.
+
+To be more exact, there is the following result:
+\begin{prop}[\cite{AliceBobMeet} theorem 9.15]\label{prop:ball}
+    Let $\rho \in \m D(\C^d\otimes \C^{d'})$ and $n\coloneqq d_1 d_2$. If $\norm{\rho - \1/n}_2 \leq 1/\sqrt{n(n-1)}$, then $\rho$ is separable.
+\end{prop}
+\subsubsection{Entanglement-Annihilating}
+\begin{prop}[Contraction Coefficient Criterion for Unital Channels]
+Let $\mathcal{E} \in \mathcal{C}(\mathcal{H}_A \otimes \mathcal{H}_B)$ be a unital quantum channel, and let $ = d_A d_B$ denote the dimension of the joint Hilbert space. If the contraction coefficient $c_2(\mathcal{E})$ with respect to states satisfies
+\begin{align*}
+    c_2(\mathcal{E}) &\le \frac{1}{n - 1},
+\end{align*}
+then $\mathcal{E}$ is entanglement-annihilating.
+\end{prop}
+
+\begin{proof}
+A channel is entanglement-annihilating if its image is entirely contained within the separable ball around the maximally mixed state. The radius of this separable ball in the Hilbert-Schmidt norm is $r_{\text{sep}} = {1}/{\sqrt{n(n-1)}}$. Thus, one requires $\|\mathcal{E}(\rho) - \frac{\1}{n}\|_2 \le r_{\text{sep}}$ for all states $\rho$. Using unitality and the definition of the contraction coefficient, one can bound the distance of the output state:
+\begin{align*}
+    \left\| \mathcal{E}(\rho) - \frac{\1}{n} \right\|_2 &= \left\| \mathcal{E}\left(\rho - \frac{\1}{n}\right) \right\|_2 \le c_2(\mathcal{E}) \left\| \rho - \frac{\1}{n} \right\|_2 \le c_2(\mathcal{E}) \sqrt{\frac{n-1}{n}}.
+\end{align*}
+Enforcing the separability condition by requiring $c_2(\mathcal{E}) \sqrt{\frac{n-1}{n}} \le \frac{1}{\sqrt{n(n-1)}}$ yields exactly $c_2(\mathcal{E}) \le \frac{1}{n-1}$.
+\end{proof}
+
+\begin{prop}[Contraction Coefficient Criterion for Arbitrary Channels]\label{prop:ea-contraction}
+Let $\mathcal{E} \in \mathcal{C}(\mathcal{H}_A \otimes \mathcal{H}_B)$ be a general quantum channel with $n = d_A d_B$. Let the bias of the channel be defined as $n = \| \mathcal{E}(\frac{\1}{n}) - \frac{\1}{n} \|_2$. If the contraction coefficient satisfies
+\begin{align*}
+    c_2(\mathcal{E}) &\le \frac{1}{n - 1} - b \sqrt{\frac{n}{n - 1}},
+\end{align*}
+then $\mathcal{E}$ is entanglement-annihilating.
+\end{prop}
+
+\begin{proof}
+Applying the triangle inequality by inserting the channel's action on the maximally mixed state:
+\begin{align*}
+    \left\| \mathcal{E}(\rho) - \frac{\1}{n} \right\|_2 &\le \left\| \mathcal{E}(\rho) - \mathcal{E}\left(\frac{\1}{n}\right) \right\|_2 + \left\| \mathcal{E}\left(\frac{\1}{n}\right) - \frac{\1}{n} \right\|_2 \\
+    &\le c_2(\mathcal{E}) \left\| \rho - \frac{\1}{n} \right\|_2 + b \le c_2(\mathcal{E}) \sqrt{\frac{n-1}{n}} + b.
+\end{align*}
+Requiring this upper bound to be strictly less than or equal to the separable ball radius $r_{\text{sep}} = \frac{1}{\sqrt{D(D-1)}}$, one obtains:
+\begin{align*}
+    c_2(\mathcal{E}) \sqrt{\frac{n-1}{n}} + b &\le \frac{1}{\sqrt{n(n-1)}} \implies c_2(\mathcal{E}) \le \frac{1}{n-1} - b\sqrt{\frac{n}{n-1}}.
+\end{align*}
+\end{proof}
+
+\subsubsection{Entanglement-Breaking: Natural Matrix Representation}
+
+The Choi matrix of the power $\m E^n$ of a channel $\m E \in C_d$ is given by $(\id \otimes \m E^n)(\pr{\Omega}) \in \Im
+(\id \otimes \m E^n)$. By using proposition \ref{prop:ball} with $d=d'$ one gets the following result: If 
+\begin{align}
+    \Im(\id \otimes \m E^n) \subset B_{\frac{1}{d\sqrt{d^2-1}},\norm \cdot_2}\left(\frac{\1}{d^2}\right),
+\end{align}
+then $\m E^n$ is entanglement-breaking.
+
+A channel $\m E$ is entanglement-breaking if and only if $\id \otimes \m E$ is entanglement-annihilating. Thus, one may consider the contraction coefficient $c_2(\id \otimes \m E)$ and apply proposition \ref{prop:ea-contraction}. Unfortunately, this coefficient is always greater than one:
+\begin{prop}
+For all $ \mathcal{E} \in \mathcal{C}(\mathcal{H})$ one has $ c_2(\text{id} \otimes \mathcal{E}) \ge \max \{1, c_2(\mathcal{E})\}$
+\end{prop}
+\begin{proof}
+It is
+$$ c_2(\text{id} \otimes \mathcal{E}) = \sup_{A, B \in \mathcal{{E}}} \frac{\|(\text{id} \otimes \mathcal{E})(A - B)\|_{HS}}{\|A - B\|_{HS}} $$
+
+Choose $A = \1 \otimes A_2$ and $B = \1 / 2 \otimes B_2$, so that $\text{tr}[A_2] = \text{tr}[B_2] = 0$
+
+$$ c_2(\text{id} \otimes \mathcal{E}) \ge \frac{\|\1 / 2 \otimes \mathcal{E}(A_2 - B_2)\|_{HS}}{\|\1 / 2 \otimes (A_2 - B_2)\|_{HS}} = \frac{\|\mathcal{E}(A_2 - B_2)\|_{HS}}{\|A_2 - B_2\|_{HS}} $$
+
+Taking the supremum over all $A$ and $B$ of this form yields $c_2(\text{id} \otimes \mathcal{E}) \ge c_2(\mathcal{E})$.
+Quantum channels have a fixed point, so that $\m E(\sigma) = \sigma$ for at least one density matrix $\sigma$. Now let $A\in \m T$, then also $A \otimes \sigma \in \m T$ and $(\id \otimes \m E)(A \otimes \sigma) = A \otimes \sigma \Rightarrow c_2(\id \otimes \m E) \geq 1$.
+\end{proof}
+\begin{lemma}
+    Let $\m E$ be a quantum channel with natural matrix representation 
+    \begin{align*}
+    \hat{\m E}= \begin{pmatrix}
+         1 & 0\\
+        v & \Delta
+    \end{pmatrix}
+    \end{align*}
+    as explained in section \ref{sec:matrix-rep}. Then $c_2(\m E)$ is the largest singular value of of $\Delta$: $c_2(\m E) = s_1(\Delta)$
+\end{lemma}
+\begin{proof} Let $n_{p\rightarrow p}$ denote the contraction coefficient with respect to all matrices, and the Hilbert-Schmidt norm in the underlying spaces. It is $c_2(\m E) = n_{2 \rightarrow 2}(\m E|_{\m T})$, see proposition \ref{prop:contraction-traceless}. The corresponding natural vector representation of an $A \in \m T$ is given by $(0,\vec A)$ for some $\vec A \in \R^{d^2-1}$. Then the matrix representation of $\m E(A)$ is given by
+    \begin{align*}
+        \begin{pmatrix}
+         1 & 0\\
+        v & \Delta
+    \end{pmatrix}\begin{pmatrix}
+        0 \\ \vec A
+    \end{pmatrix} = 
+    \begin{pmatrix}
+        0\\ \Delta \vec A
+    \end{pmatrix}.
+    \end{align*}
+    Hence $\norm{\m E(A-B)}_2 = \norm{\Delta(\vec A-\vec B)}_2$. The proof is concluded by realizing that $n_{2 \rightarrow 2}$ is the largest singular value for said matrix.
+\end{proof}
+Since proposition \ref{prop:ball} deals with states, it can be convenient to introduce the normalized Choi matrix: $\tilde C_{\m E} \coloneqq C_{\m E}/d$. Note that now $\tilde C_{\m E}$ is a density operator since it has unit trace. The vector representation of the maximally mixed bipartite state $\1/{d^2}$ is given by 
+    \begin{align}
+        \begin{pmatrix}
+            1 \\ 0
+        \end{pmatrix},
+    \end{align}
+    , where the zero is $d^2-1$-dimensional, and since the completely depolarizing channel must map every input to this vector, its matrix representation is given by 
+    \begin{align}
+    \begin{pmatrix}
+        1 & 0\\
+        0 & 0
+    \end{pmatrix}
+    \end{align}
+\begin{prop}\label{prop:contraction}
+    Let $\m E$ be a quantum channel with natural matrix representation 
+    \begin{align*}
+    \hat{\m E}= \begin{pmatrix}
+         1 & 0\\
+        v & \Delta
+    \end{pmatrix}.
+    \end{align*} If $\norm{v}_2^2 + \norm{\Delta}_F^2 \leq 1/(d^2-1)$, then $\m E$ is entanglement-breaking. For a unital channels, this reduces to $\norm \Delta_\text{HS}^2 \leq 1/(d^2-1)$.
+\end{prop}
+\begin{proof}
+The idea is to again use proposition \ref{prop:ball} on the normalized Choi matrix. Note that $\norm{\tilde C_{\m E} - \1/d^2}_2 = \norm{\hat{\m E}- \Phi_1}_\text{HS}/d$ since $\tilde C_{\Phi_1} = \1/d^2$. One has
+\begin{align*}
+    \norm{\hat{\m E}- \hat \Phi_1}_\text{HS} ^2 = \norm{\begin{pmatrix}
+        0 & 0\\ 
+        v & \Delta
+    \end{pmatrix}}_\text{HS}^2  = \sum_{i=1}^{d^2-1}|v_i|^2 + \sum_{i,j = 1}^{d^2-1} \vert \Delta_{ij}\vert^2 = \norm{v}_2^2 + \norm \Delta_\text{HS}^2.
+\end{align*}
+As it is sufficient for entanglement-breaking, set 
+\begin{align*}
+    \norm{\hat{\m E}- \hat \Phi_1}_\text{HS} ^2 &\leq \frac{1}{d\sqrt{d^2-1}}
+    \Leftrightarrow \frac{1}{d} \sqrt{\norm{v}_2^2 + \norm \Delta_\text{HS}^2} &\leq \frac{1}{d\sqrt{d^2-1}} \Leftrightarrow
+    \norm{v}_2^2 + \norm \Delta_\text{HS}^2 &\leq \frac{1}{d^2-1},
+\end{align*}
+which concludes the proof.
+\end{proof}
+
+Proposition \ref{prop:contraction} may be used to find bounds on the entanglement-breaking index of the channel. Note that
+\begin{align}
+\begin{pmatrix}
+1 & 0 \\
+v_1 & \Delta_1
+\end{pmatrix}
+\begin{pmatrix}
+1 & 0 \\
+v_2 & \Delta_2
+\end{pmatrix}
+=
+\begin{pmatrix}
+1 & 0 \\
+v_1 + \Delta_1 v_2 & \Delta_1 \Delta_2
+\end{pmatrix}
+\end{align}. 
+By induction, this leads to the following result:
+\begin{lemma}
+    Let $\hat{\mathcal{E}} = \left(\begin{smallmatrix} 1 & 0 \\ v & \Delta \end{smallmatrix}\right)$ be a quantum channel, then 
+\begin{align*}
+\hat{\mathcal{E}}^n = \begin{pmatrix} 1 & 0^T \\ a & \Delta^n \end{pmatrix}
+\end{align*}
+with $a := \sum_{k=0}^{n-1} \Delta^k v$\label{lemma:power-matrix}
+\end{lemma}
+\begin{prop}
+    Let $\hat{\mathcal{E}} = \left(\begin{smallmatrix} 1 & 0 \\ v & \Delta \end{smallmatrix}\right)$ be the matrix representation of a quantum channel. If 
+    \begin{align*}
+        \norm*{\sum_{k=1}^{n-1}\Delta^k v}_2^2 + \norm*{\Delta^n}_\text{HS}^2 \leq \frac{1}{d^2-1},
+    \end{align*}
+    then $\m E$ is entanglement-breaking.
+\end{prop}
+\begin{proof}
+    Apply lemma \ref{lemma:power-matrix} onto proposition \ref{prop:contraction}.
+\end{proof}
+
+% \documentclass{article}
+% \usepackage{amsmath}
+% \usepackage{amssymb}
+% \usepackage{amsthm}
+% \usepackage{mathtools}
+
+% % Define the norm command
+% \DeclarePairedDelimiter{\norm}{\lVert}{\rVert}
+
+% % Theorem environments
+% \newtheorem{prop}{Proposition}
+% \theoremstyle{remark}
+% \newtheorem*{remark}{Remark}
+
+
+
+\begin{prop}
+Let $\mathcal{E}$ be a unital quantum channel acting on a $d$-dimensional Hilbert space, and let $\Delta$ denote the unital sub-block of its natural matrix representation, as usual.
+
+i) If the norm of the iterated block satisfies
+\begin{align*}
+    \|\Delta^n\|_{\text{HS}}^2 &\le \frac{1}{d^2 - 1},
+\end{align*}
+then the concatenated channel $\mathcal{E}^n$ is entanglement-breaking.
+
+ii) Consequently, if the norm strictly satisfies $\|\Delta\|_{\text{HS}} < 1$ and the index $n$ satisfies
+\begin{align*}
+    \|\Delta\|_{\text{HS}} \le (d^2 - 1)^{-\frac{1}{2n}} \iff n &\ge - \frac{1}{2} \frac{\ln(d^2 - 1)}{\ln(\|\Delta\|_{\text{HS}})},
+\end{align*}
+then $\mathcal{E}^n$ is entanglement-breaking.
+\end{prop}
+
+\begin{proof}
+Statement i) is straightforward by using the procedure explained above. To prove ii), leverage the sub-multiplicativity of the Hilbert-Schmidt norm: $\|\Delta^n\|_{\text{HS}} \le \|\Delta\|_{\text{HS}}^n$. Assuming the initial condition $\|\Delta\|_{\text{HS}} \le (d^2 - 1)^{-\frac{1}{2n}}$, one can exponentiate both sides by $n$ to obtain:
+\begin{align*}
+    \|\Delta\|_{\text{HS}}^n &\le (d^2 - 1)^{-\frac{1}{2}}.
+\end{align*}
+Applying the sub-multiplicativity yields:
+\begin{align*}
+    \|\Delta^n\|_{\text{HS}} &\le \|\Delta\|_{\text{HS}}^n \le (d^2 - 1)^{-\frac{1}{2}}.
+\end{align*}
+Squaring this result yields:
+\begin{align*}
+    \|\Delta^n\|_{\text{HS}}^2 &\le \frac{1}{d^2 - 1}.
+\end{align*}
+By applying the result from part i), one concludes that $\mathcal{E}^n$ is entanglement-breaking.
+\end{proof}
+
+\textbf{Remark:} The inequality from part ii) yields a valid bound $n \ge 1$ if and only if the norm falls into the half-open interval $\|\Delta\|_{\text{HS}} \in \left[ \frac{1}{\sqrt{d^2 - 1}}, 1 \right)$. This provides a strict upper bound on the entanglement-breaking index $n_{\text{EB}}(\mathcal{E})$ (the minimum number of iterations required to break all entanglement):
+\begin{align*}
+    n_{\text{EB}}(\mathcal{E}) &< - \frac{1}{2} \frac{\ln(d^2 - 1)}{\ln(\|\Delta\|_{\text{HS}})}.
+\end{align*}
+
+Furthermore, because $\mathcal{E}$ is a unital channel, its affine translation vector is zero, establishing the norm equivalence:
+\begin{align*}
+    \|\mathcal{E}\|_{\text{HS}}^2 &= 1 + \|\Delta\|_{\text{HS}}^2.
+\end{align*}
+Substituting $\|\Delta\|_{\text{HS}} = \sqrt{\|\mathcal{E}\|_{\text{HS}}^2 - 1}$ allows expressing the index bound entirely in terms of the channel's total norm:
+\begin{align*}
+    n(\mathcal{E}) &< - \frac{1}{2} \frac{\ln(d^2 - 1)}{\ln \left( \sqrt{\|\mathcal{E}\|_{\text{HS}}^2 - 1} \right)}.
+\end{align*}
+This expression holds provided that the total norm strictly falls into the half-open interval:
+\begin{align*}
+    \|\mathcal{E}\|_{\text{HS}} &\in \left[ \frac{d}{\sqrt{d^2 - 1}}, \sqrt{2} \right).
+\end{align*}
+
+\begin{prop}
+For every unital quantum channel $\mathcal{\m E}$, the action of the channel is a contraction with respect to the Hilbert-Schmidt norm. That is, $
+\norm*{\mathcal{\m E}(X)}_{HS} \leq \norm*{X}_{HS}$ for all $X \in M_d$.
+\end{prop}
+
+\begin{proof}
+The proof relies on the Kadison-Schwarz inequality (see for example [Wol12]), which holds for any completely positive unital map. For any operator $X$, the inequality states:
+\begin{align*}
+    \mathcal{T}(X^* X) &\ge \mathcal{T}(X)^* \mathcal{T}(X)
+\end{align*}
+Because the trace is a positive linear functional, applying the trace to both sides preserves the operator inequality. Separately, because quantum channels are trace-preserving maps, the left-hand side simplifies. By applying the definition of the Hilbert-Schmidt norm ($\|A\|_{\text{HS}}^2 = \text{Tr}[A^* A]$), one obtains:
+\begin{align*}
+    \text{Tr}[\mathcal{T}(X^* X)] = \text{Tr}[X^* X] = \|X\|_{\text{HS}}^2 &\ge \text{Tr}[\mathcal{T}(X)^* \mathcal{T}(X)] = \|\mathcal{T}(X)\|_{\text{HS}}^2
+\end{align*}
+Taking the square root of both sides concludes the proof.
+\end{proof}
+
+\begin{prop}
+Let $\hat{\mathcal{E}} = \begin{pmatrix} 1 & 0 \\ 0 & \Delta \end{pmatrix}$ be the natural matrix representation of a unital quantum channel. Then the largest singular value of the matrix $\Delta$ is bounded by 1: $s_1(\Delta) \leq 1$.
+\end{prop}
+\begin{proof}
+Let $X$ be a traceless Hermitian operator. In the matrix representation, its vector form is simply $(0, \vec{x})^T$, and its Hilbert-Schmidt norm corresponds exactly to the Euclidean norm of this vector, $\norm*{X}_{HS} = \norm*{\vec{x}}_2$. Applying the channel $\hat{\mathcal{E}}$ yields the output vector $(0, \Delta \vec{x})^T$. By Proposition 1, every unital channel is a contraction in the Hilbert-Schmidt norm, meaning the norm of the output cannot exceed the norm of the input: $
+\norm*{\Delta \vec{x}}_2 \leq \norm*{\vec{x}}_2$.
+Recall that the largest singular value $s_1(\Delta)$ is identical to the induced 2-norm of the matrix. Taking the supremum over all non-zero vectors $\vec{x}$ yields:
+\begin{align*}
+s_1(\Delta) = \sup_{\vec{x} \neq 0} \frac{\norm*{\Delta \vec{x}}_2}{\norm*{\vec{x}}_2} \leq 1.
+\end{align*}
+\end{proof}
+
+
+
+\subsubsection{Entanglement-Breaking$: \chi$-Matrix}
+Remember that proposition \ref{prop:norm-chi} provides a lower bound of $1$ and an upper bound of $d$ for the norm of the matrix representation of a quantum channel.
+\begin{prop}
+Let $\mathcal{E} \in C_d$ be a quantum channel. Then there is the following necessary condition for entanglement-breaking:
+\begin{align*}
+    \m E \text{ is entanglement-breaking} \Rightarrow \norm \chi_\text{HS} \leq \sqrt{d}
+\end{align*}
+Furthermore, there exists an entanglement-breaking channel that achieves the general lower bound $\|\chi\|_{\text{HS}} = 1$. Also, there is a completely co-positive channel that achieves the upper bound $\|\chi\|_{\text{HS}} = \sqrt{d}$ that is necessary for entanglement-breaking channels. 
+\end{prop}
+
+\begin{proof}
+Assume $\m E$ to be entanglement-breaking. Then its Kraus operators $K_i \eqqcolon |w_i\rangle\langle v_i|$ are rank-one. Note that in this case the $\pr {w_i}$ are the 'prepare' states in the measure-and-prepare form, so that $\norm{w_i}=1$ for all $i$. Using
+\begin{align*}
+\text{tr}[K_i^* K_j] &= \text{tr}[|v_i\rangle\langle w_i|w_j\rangle\langle v_j|] = \langle w_i, w_j \rangle \langle v_j, v_i \rangle
+\end{align*}
+together with proposition \ref{prop:relation-norms} yields
+\begin{align*}
+\|\chi\|_{\text{HS}}^2 &= \sum_{i,j} |\text{tr}[K_i^* K_j]|^2 = \sum_{i,j} |\braket{ w_i}{w_j} |^2 |\braket{v_j}{ v_i }\rangle|^2 \\
+&\le \sum_{i,j} \|w_i\|^2 \|w_j\|^2 |\braket{ v_j}{ v_i} |^2 = \sum_{ij}\vert \braket{v_j}{v_i}\vert ^2,
+\end{align*} 
+where the inequality follows from the Cauchy-Schwarz inequality. Trace-preservation of $\m E$ is in-forced by $\sum_i K_i^*K_i = \1$ which implies $\sum_i \ket{v_i}\braket{w_i}{w_i}\bra{v_i} = \sum_i \pr{v_i} = \1$ since $\{\pr {v_i}\}_i$ needs to be a POVM, so that 
+\begin{align*}
+    \norm \chi_\text{HS}^2 &\leq \sum_{i,j} \braket{v_j}{v_i} \braket{v_i}{v_j} = \sum_j \bra{v_j}, \left( \sum_i |v_i\rangle\langle v_i| \right) \ket{v_j } \\ &= \sum_j \braket{ v_j}{v_j}  = \text{tr}\left[ \sum_j |v_j\rangle\langle v_j| \right] = \text{tr}[\1] = d, 
+\end{align*}
+Taking the square root yields the upper bound $\|\chi\|_{\text{HS}} \le \sqrt{d}$. For saturation of the general lower bound with an entanglement-breaking channel consider the completely depolarizing map $ \mathcal{R}_{\1/d}$. Using the general formula for the norm of depolarizing channels yields
+\begin{align*}
+\|\chi\|_{\text{HS}} &= d \sqrt{1 - 1 \cdot \frac{d^2-1}{d^2}} = d \sqrt{\frac{d^2 - d^2 + 1}{d^2}} = d \sqrt{\frac{1}{d^2}} = 1
+\end{align*}
+which confirms the existence of an entanglement-breaking channel with $\|\chi\|_{\text{HS}} = 1$. Now onto the saturation of the upper bound with a PPT channel: 
+\end{proof}
+
+\begin{prop}
+Let $\mathcal{E}$ be a quantum channel and $\vec{\lambda}$ a vector of its eigenvalues. If $
+    \|\vec{\lambda}\|_{2n} > d^{\frac{1}{2n}}$, 
+then $\mathcal{E}^n$ is not entanglement-breaking. Let $g$ be the number of peripheral eigenvalues, $\lambda_2$ be an eigenvalue with the largest modulus strictly smaller than 1, and $D$ be its algebraic multiplicity. If $
+    g + D|\lambda_2|^{2n} > d$, 
+then $\mathcal{E}^n$ is not entanglement-breaking. Consequently, if the iteration index satisfies
+\begin{align*}
+    n &< \frac{\ln(d - g) - \ln(D)}{2\ln(|\lambda_2|)},
+\end{align*}
+then $\mathcal{E}^n$ is not entanglement-breaking. Furthermore, if $d > g$, the entanglement-breaking index is bounded from below by
+\begin{align*}
+    n_{\text{EB}}(\mathcal{E}) &\ge \frac{\ln\left(\frac{d-g}{D}\right)}{2\ln(|\lambda_2|)} = \frac{\ln\left(\frac{D}{d-g}\right)}{2\ln(1/|\lambda_2|)}.
+\end{align*}
+This result requires $D > d - g$ to yield a nontrivial (positive) bound.
+\end{prop}
+
+\begin{proof}
+By Proposition 6.2.10, if $\mathcal{E}^n$ is entanglement-breaking, the Hilbert-Schmidt norm of its Choi matrix must satisfy $\|\chi_{\mathcal{E}^n}\|_{\text{HS}} \le \sqrt{d}$. Let $\hat{\mathcal{E}}$ denote the natural representation (transfer matrix) of the channel. Because the elements of the Choi matrix are a permutation of the elements of the transfer matrix, their Hilbert-Schmidt norms are identical. Thus, the necessary condition becomes $\|\hat{\mathcal{E}}^n\|_{\text{HS}} \le \sqrt{d}$. By Schur's inequality, the squared Hilbert-Schmidt norm is bounded from below by the sum of the squared moduli of the eigenvalues:
+\begin{align*}
+    \|\hat{\mathcal{E}}^n\|_{\text{HS}}^2 &\ge \sum_i |\lambda_i(\mathcal{E})|^{2n}.
+\end{align*}
+Let $\vec{\lambda}$ be the vector of eigenvalues of $\mathcal{E}$. The condition for strict violation becomes $\|\vec{\lambda}\|_{2n}^{2n} > d$. Separating the $g$ peripheral eigenvalues (modulus 1) from the rest, the sum can be lower-bounded:
+\begin{align*}
+    \sum_i |\lambda_i|^{2n} &= g \cdot 1 + \sum_{i: |\lambda_i|<1} |\lambda_i|^{2n} \ge g + D|\lambda_2|^{2n}.
+\end{align*}
+Enforcing the strict violation condition $g + D|\lambda_2|^{2n} > d$ yields:
+\begin{align*}
+    D|\lambda_2|^{2n} &> d - g.
+\end{align*}
+Taking the natural logarithm and isolating $n$ (noting that $\ln(|\lambda_2|)$ is negative, which flips the inequality) results in:
+\begin{align*}
+    n &< \frac{\ln(d - g) - \ln(D)}{2\ln(|\lambda_2|)}.
+\end{align*}
+Therefore, if this inequality holds, the necessary norm condition is strictly violated, meaning $\mathcal{E}^n$ cannot be entanglement-breaking.
+\end{proof}
+\begin{prop}
+Let $g$ be the number of peripheral eigenvalues. If $g > d$, then the quantum channel $\mathcal{E}$ is not eventually entanglement-breaking (EEB).
+\end{prop}
+
+\begin{proof}
+As established previously, a necessary condition for any iterated channel $\mathcal{E}^n$ to be entanglement-breaking is that the Hilbert-Schmidt norm of its transfer matrix satisfies the upper bound $\|\hat{\mathcal{E}}^n\|_{\text{HS}}^2 \le d$. By Schur's inequality, the squared norm is bounded from below by the sum of the squared moduli of its eigenvalues. Isolating the $g$ peripheral eigenvalues, which have a modulus of exactly 1, yields the following lower bound for all $n \in \mathbb{N}$:
+\begin{align*}
+    \|\hat{\mathcal{E}}^n\|_{\text{HS}}^2 &\ge \sum_i |\lambda_i|^{2n} \ge g \cdot 1^{2n} = g.
+\end{align*}
+By assumption, $g > d$. Therefore, the necessary upper bound is strictly violated for all possible powers $n$: $\|\hat{\mathcal{E}}^n\|_{\text{HS}}^2 \ge g > d.$
+\end{proof}
+
+
+
+
+
+
+
+\section{See-Saw SDP optimization: Testing the PPT conjecture}\label{ch:result-numerics}
+The aim of this section is to test the PPT$^2$ conjecture, i.e., checking if for two completely copositive quantum channels $\m E_1, \m E_2 \in C_d$, the Choi matrix $C_{\m E_1\circ \m E_2}$ of their composition is separable. As explained in chapter \ref{ch:entanglement}, one can do this by investigating whether $(\id \otimes \phi)(C_{\m E_1\circ \m E_2})$ has a negative eigenvalue, i.e., if there is a vector $\ket \psi$ such that $\bra \psi (id \otimes \phi)(C_{\m E_1\circ \m E_2}) \ket \psi < 0$. Here, $\phi:\m M_d \rightarrow \m M_d$ may be any positive, but not completely positive map. By the spectral decomposition, one may equivalently minimize the expression
+\begin{align}
+    \min_{\mathcal{E}_1, \mathcal{E}_2, \rho} \tr \Big[ \rho \, (\text{id} \otimes \phi)(C_{\mathcal{E}_1 \circ \mathcal{E}_2}) \Big],
+\end{align}
+where the minimization is over density matrices $\rho$ and PPT channels $\m E_1$ and $\m E_2$, and hope for a negative value:
+\begin{enumerate}
+    \item Fix a starting density matrix $\rho^{(1)}$ and PPT channel $\m E_1^{(1)}\in \text{PPT}_d$ and optimize over
+    \begin{align*}
+        \m E_2^{(2)}\coloneqq \argmin_{\m E_2\in\text{PPT}_d}\tr[\rho^{(1)} (\id \otimes \phi)(C_{\m E_1^{(1)}\circ \m E_2})]
+    \end{align*}
+    \item Fix $\m E_2^{(2)}$ and optimize over $\m E_1$:
+    \begin{align*}
+        \m E_1^{(2)}\coloneqq \argmin_{\m E_1\in\text{PPT}_d}\tr[\rho^{(1)} (\id \otimes \phi)(C_{\m E_1\circ \m E_2^{(2)}})]
+    \end{align*}
+    \item Optimize over the density matrix: 
+    \begin{align*}
+        \rho^{(2)}\coloneqq \argmin_{\rho \in \m D(\C^d)}\tr[\rho (\id \otimes \phi)(C_{\m E_1^{(2)}\circ \m E_2^{(2)}})]
+    \end{align*}
+\end{enumerate}
+This process may be repeated arbitrarily many times, until the value of $\tr[\rho (\id \otimes \phi)(C_{\m E_1\circ \m E_2})]$ does not change significantly anymore (or sooner for weaker results). Note that, by the Rayleigh-Ritz theorem (\cite{Horn2012} theorem 4.4.2), the trace $\trr{M \rho}$ over the state space is minimized when $\rho$ is the pure state corresponding to the eigenvector of the smallest eigenvalue of $M$.
+
+Fortunately, all three optimization steps may be performed by semidefinite programming (SDP). An SDP program consists of a variable, an objective for that variable and a constraint: The variable needs to be a Hermitian matrix $X$, the objective has to be formulated by minimizing $\trr{XC}$, where $C$ is a constant matrix. Lastly, the constraint on the variable needs to be either linear or positive semidefinite (hence the name). If these conditions are met, then the SDP is guaranteed to find this minimum. See for example \cite{Vandenberghe1996} for a more comprehensive overview.
+
+In the case of the optimization problem for the PPT$^2$ conjecture, the objectives are clearly in the desired trace format. The optimization over density matrices obviously obeys SDP constraints. For the quantum channels, their Choi matrix (which is in linear dependence on the channel) needs to be positive semidefinite and have the appropriate partial trace over the second subsystem (depending on the normalization of the maximally entangled state used in the definition of the Choi matrix). Finally, the channel being PPT is a constraint on the partial trace of the Choi matrix, which is simply a reshuffling of a subsystem and thus linear.
+
+An implementation of the SDP program with the Breuer-Hall map\footnote{As mentioned, there are many other positive maps to choose from. The Breuer-Hall map is a good choice to start since it is indecomposable and have a tunable parameter, as mentiond in chapter \ref{ch:entanglement}.} can be found in \ref{lst:breuer}, as well as its use in testing the PPT$^2$ conjecture in \ref{lst:testing-ppt-2}. Note that there are many different Breuer-Hall maps depending on the specific unitary and skew-symmetric matrix that is used. Unfortunately, another optimization over this unitary is not possible by using SDP programs, since the unitarity constraint, for example, is not linear (and neither SDP). Consequently, it is useful to (manually) change the Breuer-Hall maps for a more exhaustive search.
+
+The author of this thesis executed this code for even dimensions $d=4$ up to $d=12$\footnote{On a standard computer in Python. Using lower-level programming languages could make testing $d=14$ possible, but no significantly higher dimensions due to the computational complexity staying the same.}, where no higher dimensions were possible due to the numerical complexity.
+\begin{comment}
+\section{\textcolor{red}{Complementary channels}}\label{ch:result-complement}
+\begin{prop}
+    Let $T\in \m C(\hi_A,\hi_B)$ be a quantum channel with Kraus rank $d_A$ then $T$ is entanglement breaking if and only if there is is a complementary channel $T^c$ that is a Schur map wrt some basis. In this case the Schur basis is the measurement basis in the Holevo form of the quantum channel \textcolor{red}{is that result already known}
+\end{prop}
+
+\begin{proof}
+    \begin{align*}
+    \mathcal{E} &= \sum_{n=1}^{d_A} \langle v_n, \cdot \, v_n \rangle |w_n\rangle\langle w_n| \text{, so } K_n = |w_n\rangle\langle v_n| \\
+    (K_n)_{ij} &= (w_n)_i (v_n)_j = (\widetilde{K}_i)_{nj}
+\end{align*}
+
+$\mathcal{E} : B(\mathcal{H}_A) \to B(\mathcal{H}_B)$, so we choose $\{ |v_n\rangle / \|v_n\| \}_n$ as a basis for $\mathcal{H}_A$ (since $\sum_n |v_n\rangle\langle v_n| = \mathbb{1}_A$), so $(v_n)_j = \delta_{nj}$.
+
+\begin{align*}
+    \widetilde{K}_i &: \mathcal{H}_A \to \mathcal{H}_E \\
+    (\widetilde{K}_i)_{nj} &= (w_n)_i \delta_{nj} \quad \text{diagonal } \square
+\end{align*}
+
+($\Leftarrow$) Let $\mathcal{E}^c$ be a complement s.t. $\mathcal{E}^c(X) = A * X$ for ($A \ge 0, A_{ii} = 1$), then every Kraus decomp $(\widetilde{K}_i)$ is diagonal.
+
+\[
+    (\widetilde{K}_i)_{nj} = \delta_{nj} \cdot c_{in} \quad \text{for some } c_{in} \in \mathbb{C} \text{ wrt a basis } \{|e_k\rangle\}_{k=1}^{d_A=d_E}
+\]
+
+Here $n,j \in \{1, \dots, d_A=d_E=\text{Kraus rank}\}$ and $i \in \{1, \dots, d_B\}$.
+
+\[
+    \text{Then } (K_n)_{ij} = (\widetilde{K}_i)_{nj} = \underbrace{\delta_{nj} c_{in}}_{= (w_n)_i (v_n)_j} = |w_n\rangle\langle v_n| \text{ wrt basis } \{|e_k\rangle\}
+\]
+
+\textit{(Note: Kraus rank is upper bounded by $d_B$, so we may extend number to $d_B$)}
+\end{proof}
+\begin{prop} Let $\mathcal{E} \in \mathcal{C}(\mathcal{H})$ be a q.c. with Kraus rank $= \dim \mathcal{H} = d$ \\
+Then $\exists$ a complement $\mathcal{E}^c$ that is e.b. (and thus all are) \\
+iff $\mathcal{E}(X) = \1 * X$ wrt a basis
+\end{prop}
+\begin{proof}
+Firstly complements are unique up to composition with \\
+unitary channels $\rightarrow$ can neither create entanglement nor \\
+destroy it in $(id \otimes \mathcal{E}) (|\Omega\rangle\langle\Omega|)$
+
+\begin{align*}
+    (\Rightarrow) \quad & \mathcal{E}^c \text{ e.b., then } \exists \; \mathcal{E}^c \text{ Schur map, if } \mathcal{E}^c = \mathbb{1} * \cdot \\
+    & \text{wrt a basis } \{v_i\}_i \Rightarrow \mathcal{E}^c(X) = (\delta_{ij} X_{ii})_{ij} = \sum_i \langle v_i, X v_i \rangle |v_i\rangle\langle v_i| \\
+    & \Rightarrow \widetilde{K}_i = |v_i\rangle\langle v_i| \text{ are Kraus op., } (\widetilde{K}_i)_{jl} = \delta_{ij}\delta_{il} \\
+    & \Rightarrow (K_j)_{il} = \delta_{ij}\delta_{il} \Rightarrow K_j = \sum_{i,l} (\delta_{ij} \delta_{il}) |v_i\rangle\langle v_l| \\
+    & \hspace{4cm} = |v_j\rangle\langle v_j| = \widetilde{K}_j \\
+    & \Rightarrow \mathcal{E}(X) = \mathbb{1} * X
+\end{align*}
+
+($\Leftarrow$) Let $\mathcal{E}(X) = \mathbb{1} * X$, then $\mathcal{E}^c = \mathcal{E}$ e.b.
+\end{proof}
+\end{comment}
+\section{Entanglement-Breaking Indices of Sets}\label{ch:result-sets}
+It may be interesting to consider sets of quantum channels and calculate an entanglement-breaking index of this set, i.e., the supremum of all indices of channels in that set. Firstly, let it be noted, that even if one considers a sequence of channels inside the set of eventually entanglement-breaking channels EEB$_d$, then a limit of such a sequence must not be entanglement-breaking again. As an example for this, consider the depolarizing channel
+\begin{align}
+    \Phi_{\frac{1}{n}}= \left(1-\frac{1}{n}\right)\id + \frac{1}{n}R_{\1/d}.
+\end{align}
+This channel converges to the identity, which is clearly not contained in EEB$_d$. In particular, there is no upper bound on the whole set EEB$_d$:
+\begin{lemma}
+    The set of entanglement-breaking channels $\text{EB}_d$ is closed
+\end{lemma}
+\begin{proof}
+    $\text{EB}_d$ is the pre-image of the set $\text{SEP}_d$ of separable states under the Choi-Jamilkowski-mapping. This mapping is continuous and $\text{SEP}_d$ is closed.
+\end{proof}
+\begin{prop}
+    There is no $n_\text{EB}(d)$, such that for all $\m E \in \text{EEB}_d$ and for all $n\geq n_\text{EB}(d)$ one has $\m E^n \in \text{EB}_d$.
+\end{prop}
+\begin{proof}
+    Assume there is such a $n_\text{EB}(d)\eqqcolon C$, then $\m E^C \in \text{EB}_d$ for all $ \m E \in \text{EEB}_d$. Consider the set $\{\Phi_{1/n}\}_{n\in \N} \subset \text{EEB}_d$ of depolarizing channels. By assumption it is $\Phi_{1/n}^C \in \text{EB}_d$. Since $\text{EB}_d$ is closed, one has that
+    \begin{align*}
+        \lim_{n\rightarrow \infty} \Phi_{1/n}^C = \left( \lim_{n\rightarrow \infty} \Phi_{1/n}\right)^C  = \id_{C_d}^C\in \text{EEB}_d,
+    \end{align*}
+    which is a contradiction. Here, the first '=' is truholds because since the composition is a continuous operation.
+\end{proof}
+\begin{prop}
+    Let $S \subset \text{EEB}_d$ be compact, such that for all $\m E \in S$ there exists $n \in \N$ such that $\m E^n \in \inter(\text{EB})$, then there is an index $n_S(d)$ such that for all $\m E \in S$ it holds $n_\text{EB}(\m E)\leq n_S(d)$.\label{prop:set-index}
+\end{prop}
+\begin{proof}
+    Let $U_n\coloneqq \{\Phi \in S: \Phi^n \in \inter(\text{EB})\}$, then $S \subset \bigcup_{n\in \N}U_n$. Let $f_n:C_d \rightarrow C_d, \m E \mapsto \m E^n$ be the $n$-fold composition (which is continuous), then $U_n = f_n^{-1}(\inter(EB))$ is open since the interior of any set is open. Since $S$ is compact, it has a finite open subcover $S \subset \bigcup_{i=1}^N U_{n_i}$. Hence, $n_S(d) \leq \max_{i=1}^N \{n_i\}< \infty$.
+\end{proof}
+\begin{ex}
+    Let $S \in \text{EEB}_d$ be a compact set, then there might not be an index $n_S$ with the properties from proposition \ref{prop:set-index}. As an example consider the channel $\m R_{\pr 0}$, which is entanglement-breaking, i.e., $n_{EB}(\m R_{\pr 0})=1$. In particular, this channel lies on the boundary of $EB_d$: $\m R_{\pr 0} \in \partial \text{EB}_d$.
+\end{ex}
+\begin{comment}
+\section{Other}
+\subsubsection{\textcolor{red}{convolution of heisenberg weyl channel stuff}}
+
+\subsubsection{\textcolor{red}{missing}}
+
+\begin{comment}
+
+\begin{prop}
+A quantum channel $\mathcal{E}$ is entanglement-breaking if and only if its natural representation $\hat{\mathcal{E}}$ satisfies:
+\begin{align*}
+\hat{\mathcal{E}} \in \text{span} \{ P \otimes \bar{P} : \text{rank}(P) = 1 \}
+\end{align*}
+\end{prop}
+
+\begin{proof}
+Let $\mathcal{E}$ be a quantum channel. The natural representation (or Liouville representation) of the channel in terms of its Kraus operators $\{K_i\}$ is universally given by:
+\begin{align*}
+\hat{\mathcal{E}} &= \sum_i K_i \otimes \bar{K}_i
+\end{align*}
+
+First, assume $\mathcal{E}$ is entanglement-breaking. By definition, an entanglement-breaking channel admits a Kraus decomposition where every Kraus operator is rank-one, meaning we can write $K_i = \ket{\psi_i}\bra{\phi_i}$ for some vectors $\ket{\psi_i}$ and $\ket{\phi_i}$. Substituting these into the natural representation yields:
+\begin{align*}
+\hat{\mathcal{E}} &= \sum_i (\ket{\psi_i}\bra{\phi_i}) \otimes \overline{(\ket{\psi_i}\bra{\phi_i})}
+\end{align*}
+Since each $K_i$ is a rank-one operator $P_i$, each term in the sum is exactly of the form $P_i \otimes \bar{P}_i$. Because $\hat{\mathcal{E}}$ can be written as a linear combination (specifically, a sum) of such elements, it directly follows that $\hat{\mathcal{E}} \in \text{span} \{ P \otimes \bar{P} : \text{rank}(P) = 1 \}$.
+
+Conversely, assume that $\mathcal{E}$ is a quantum channel and $\hat{\mathcal{E}} \in \text{span} \{ P \otimes \bar{P} : \text{rank}(P) = 1 \}$. This implies that the action of the channel can be expanded using a set of rank-one operators $\{P_j\}$:
+\begin{align*}
+\hat{\mathcal{E}} &= \sum_j c_j (P_j \otimes \bar{P}_j)
+\end{align*}
+for some coefficients $c_j$. Because $\mathcal{E}$ is a completely positive map, its associated Choi matrix must be positive semi-definite. The canonical isomorphism between the natural representation and the Choi matrix ensures that the physically valid completely positive decomposition of $\hat{\mathcal{E}}$ corresponds to terms where the coefficients are strictly positive ($c_j > 0$). By absorbing these positive coefficients into the operators as $K_j = \sqrt{c_j} P_j$, we construct a valid Kraus decomposition $\hat{\mathcal{E}} = \sum_j K_j \otimes \bar{K}_j$ where every $K_j$ is still a rank-one operator. Having a Kraus decomposition consisting entirely of rank-one operators is the exact definition of an entanglement-breaking channel.
+\end{proof}
+\end{comment}
+\end{comment}

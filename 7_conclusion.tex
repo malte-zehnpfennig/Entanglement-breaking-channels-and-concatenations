@@ -1,0 +1,26 @@
+\chapter{Conclusion and Outlook}
+\label{chap:conclusion}
+\subsubsection{Conclusion}
+This thesis has investigated the concept of entanglement-breaking quantum channels, with a particular focus on their behavior under composition. To establish the necessary framework for analyzing these phenomena, chapter \ref{chap:2_general_preliminaries} provided a brief introduction to and overview of the core concepts of quantum information theory, as well as the basic mathematical foundations needed to study the topic. Chapter \ref{ch:3_preliminaries_channels} subsequently provided a more detailed overview of properties of quantum channels and special types of channels. A particular focus is on the different matrix representations of a quantum channel as a linear map, and recent developments are outlined. Chapter \ref{chap:4_entanglement} introduces the core concepts of (eventually) entanglement-breaking channels and entanglement-breaking indices. Some of the existing literature on is reviewed and recent developments are states. Primitive quantum channels, for example, are eventually entanglement-breaking since their limit of the power series does not lie on the boundary of the set of entanglement-breaking channels.
+
+In chapter \ref{ch:own_results}, some necessary or separately sufficient analytical conditions for a channel to be entanglement-breaking are provided: Using the property, that SIC-POVMs are a basis and the measure-and-prepare form of an entanglement-breaking quantum channel, section 6.1 introduces a sufficient condition for a channel to be entanglement-breaking. It is shown that this criterion, is in general, only sufficient. As an example, the criterion is applied to the well-studied depolarizing channel. 
+
+Section 6.2 derives sufficient conditions for a channel to be entanglement-breaking using its contraction coefficient and the Hilbert-Schmidt norm of its matrix representations. Specifically, it establishes an analytically computable upper bound on a unital channel's entanglement-breaking index, yielding:
+\begin{align*}
+    n_\text{EB}(\mathcal{E}) &< -\frac{\ln(d^2-1)}{2\ln(||\Delta||_{HS})}.
+\end{align*}
+Furthermore, a necessary criterion is introduced, proving that the Frobenius norm of an entanglement-breaking channel's x-matrix is strictly upper-bounded by $\sqrt{d}$. Lastly, it is demonstrated that these fundamental norm bounds can be saturated, as the completely depolarizing channel achieves the general lower bound of $1$, while certain completely copositive channels achieve the necessary upper bound of $\sqrt{d}$.
+
+Section 6.3 details a numerical investigation of the PPT$^n$ conjecture using a See-Saw Semidefinite Programming optimization technique. Using the Breuer-Hall map as the positive map, the procedure was implemented to test the PPT$^2$ conjecture. No violations of the conjecture were found for even dimensions up to $d=12$ tested.  
+\begin{comment}
+\textcolor{red}{Section 6.4 establishes a structural equivalence between an entanglement-breaking channel of full Kraus rank and its complementary channel. Specifically, it proves that the original channel is entanglement-breaking if and only if its complementary channel acts identically to a Schur multiplier map with respect to the associated measurement basis.}
+\end{comment}
+
+Section 6.4 extends the concept of the entanglement-breaking index to arbitrary sets of quantum channels. It demonstrates that while the entire space of eventually entanglement-breaking channels lacks a universal, finite upper bound for this index, strict bounds can be rigorously established for specific compact subsets where the iterative compositions eventually enter the interior of the entanglement-breaking set.
+
+\subsubsection{Outlook}
+While the conditions on the matrix norm of the quantum channel were presented in chapter \ref{sec:result:contraction}, the thesis mostly fails to apply them to exemplary quantum channels apart from the depolarizing channel. This is something that could be done in the future.
+
+In search of a violation of the PPT$^n$ criterion, the SDP program from section \ref{ch:result-numerics} could be performed with other positive maps, for example with Choi-type maps.
+
+Ultimately, while this work provides some new perspectives on entanglement-breaking of iterated channels, the complete classification of eventually entanglement-breaking operations and the resolution of the PPT$^2$ conjecture remain open challenges.

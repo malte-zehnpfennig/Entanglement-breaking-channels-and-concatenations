@@ -1,0 +1,713 @@
+\chapter{Codes}
+\label{cha:app1_codes}
+\begin{lstlisting}[language=python, caption = {General utility functions}, label = {lst:code-utility}, basicstyle=\ttfamily\scriptsize, % Shrinks the font size
+    lineskip=-1pt,                   % Pulls the lines of code closer together
+    aboveskip=10pt,                  % Reduces white space above the box
+    belowskip=10pt                   % Reduces white space below the box
+]
+import numpy as np
+from scipy.linalg import block_diag
+from scipy.linalg import eigvalsh
+from toqito.channel_ops import apply_channel
+from toqito.matrices import gen_pauli_z as clock, gen_pauli_x as shift
+
+np.set_printoptions(precision=5, suppress=True)
+from fid_vectors import fid_vector_list
+
+import jax
+import jax.numpy as jnp
+
+import numpy as np
+
+def depol_jax(rho, p):
+    d = rho.shape[0]
+    return (1-p)* rho + p* (jnp.eye(d) / d) * jnp.trace(rho)
+
+def compute_ptm_jax(channel_func_single_arg, d):
+    basis_matrices = get_orthonormal_basis_first_identity(d) # Deine Funktion von vorhin
+    basis_stack = jnp.array(basis_matrices)
+    
+    basis_flat = basis_stack.reshape(basis_stack.shape[0], -1)
+    outputs_flat = outputs_stack.reshape(outputs_stack.shape[0], -1)
+    
+    ptm = jnp.conj(basis_flat) @ outputs_flat.T
+    return ptm
+
+
+def get_orthonormal_basis_first_identity(d: int):
+    """
+    Generates the d^2 Orthonormal Generalized Gell-Mann matrices.
+    IMPORTANT: The normalized Identity is placed at index 0.
+    
+    Args:
+        d (int): Dimension of the Hilbert space.
+        
+    Returns:
+        list[np.ndarray]: List of basis matrices E_0, ..., E_{d^2-1}.
+    """
+    basis = []
+
+    # E_0 = I / sqrt(d)
+    basis.append(np.eye(d, dtype=complex) / np.sqrt(d))
+    
+    # 2. Symmetric Off-Diagonal
+    for k in range(d):
+        for j in range(k):
+            mat = np.zeros((d, d), dtype=complex)
+            mat[j, k] = 1
+            mat[k, j] = 1
+            basis.append(mat / np.sqrt(2))
+            
+    # 3. Anti-Symmetric Off-Diagonal
+    for k in range(d):
+        for j in range(k):
+            mat = np.zeros((d, d), dtype=complex)
+            mat[j, k] = -1j
+            mat[k, j] = 1j
+            basis.append(mat / np.sqrt(2))
+            
+    # 4. Diagonal (Traceless)
+    for l in range(1, d):
+        mat = np.zeros((d, d), dtype=complex)
+        coeff = np.sqrt(1 / (l * (l + 1)))
+        for m in range(l):
+            mat[m, m] = coeff
+        mat[l, l] = -l * coeff
+        basis.append(mat)
+        
+    return basis
+
+def compute_ptm(channel_func, d: int) -> np.ndarray:
+    """
+    Computes the Pauli Transfer Matrix (PTM) for a black-box channel.
+    
+    Args:
+        channel_func (callable): A function T(rho) -> rho_prime.
+        d (int): Dimension of the system.
+        
+    Returns:
+        np.ndarray: The d^2 x d^2 matrix M where M_ij = Tr(E_i @ T(E_j)).
+    """
+    # 1. Get the basis E_0, ..., E_{d^2-1}
+    basis = get_orthonormal_basis_first_identity(d)
+    n = len(basis) # Should be d^2
+    
+    # 2. Initialize the empty PTM
+    ptm = np.zeros((n, n), dtype=complex)
+    
+    # 3. Compute column by column (to minimize calls to channel_func)
+    for j in range(n):
+        E_j = basis[j]
+        
+        output_rho = channel_func(E_j)
+        
+        for i in range(n):
+            E_i = basis[i]
+            
+            # M_ij = Tr(E_i @ T(E_j))
+            # Note: Since basis is Hermitian, E_i^dagger = E_i.
+            val = np.trace(E_i @ output_rho)
+            ptm[i, j] = val
+            
+    return ptm
+
+def compute_ptm_vectorized(channel_func, d: int) -> np.ndarray:
+    """
+    Computes the Pauli Transfer Matrix (PTM) using vectorization.
+    """
+    basis_flat = np.array([b.flatten() for b in basis_matrices])
+
+    output_states = [channel_func(E_j) for E_j in basis_matrices]
+
+    outputs_flat = np.array([rho.flatten() for rho in output_states])
+
+    ptm = basis_flat.conj() @ outputs_flat.T
+    
+    return ptm
+
+    
+
+
+def heisenberg_weyl_toqito(x: int, z: int, d: int) -> np.ndarray:
+    """
+    Implements the Heisenberg-Weyl operator using toqito's generalized Pauli function.
+    
+    Toqito's `gen_pauli(k, 1, d)` corresponds to X.
+    Toqito's `gen_pauli(k, 2, d)` corresponds to Z.
+    
+    However, toqito does not have a single function taking both x and z directly 
+    as a combined W operator in one call, so we construct it similarly.
+    """
+    try:
+        from toqito.matrices import gen_pauli
+    except ImportError:
+        return "Toqito not installed. Run `pip install toqito`."
+    
+    X_op = gen_pauli(x, 1, d)
+    
+    Z_op = gen_pauli(z, 2, d)
+    
+    return X_op @ Z_op
+
+
+def depol_channel(rho):
+    return apply_channel(rho,choi_depolarizing)
+
+def top_two_abs_values(arr: np.ndarray, decimals: int = 5):
+    """
+    Analyzes a 1D numpy array to find the counts of the highest 
+    and second-highest absolute values, robust to floating point errors.
+
+    Args:
+        arr (np.ndarray): Input array of shape (n,).
+        decimals (int): Number of decimal places to round to. 
+                        Default is 10, which handles most numerical noise.
+
+    Returns:
+        dict: Statistics about the top two absolute values.
+    """
+    # 1. Compute absolute values
+    abs_vals = np.abs(arr)
+    
+    # 2. CRITICAL STEP: Round to handle floating point noise
+    # This groups 0.300000001 and 0.299999999 together as 0.3
+    abs_vals = np.round(abs_vals, decimals=decimals)
+    
+    # 3. Find unique values and their counts
+    unique_vals, counts = np.unique(abs_vals, return_counts=True)
+    
+    # 4. Handle Edge Case: Empty Array
+    if len(unique_vals) == 0:
+        return {
+            "first_max_val": None, "first_max_count": 0,
+            "second_max_val": None, "second_max_count": 0
+        }
+
+    # 5. Extract First Highest (Last element in sorted array)
+    first_max_val = unique_vals[-1]
+    first_max_count = counts[-1]
+
+    # 6. Extract Second Highest (Second to last element)
+    if len(unique_vals) >= 2:
+        second_max_val = unique_vals[-2]
+        second_max_count = counts[-2]
+    else:
+        # Edge Case: All numbers have the same absolute value
+        second_max_val = None
+        second_max_count = 0
+
+    return {
+        "first_max_val": first_max_val,
+        "first_max_count": first_max_count,
+        "second_max_val": second_max_val,
+        "second_max_count": second_max_count
+    }
+\end{lstlisting}
+
+\begin{lstlisting}[language = python, caption = Implementation of the SIC-POVM condition, label = {lst:code-sic}, basicstyle=\ttfamily\scriptsize, % Shrinks the font size
+    lineskip=-1pt,                   % Pulls the lines of code closer together
+    aboveskip=10pt,                  % Reduces white space above the box
+    belowskip=10pt                   % Reduces white space below the box
+]
+
+def get_sic_povm(d, fiducial_vector):
+    """
+    Generates a SIC-POVM from a fiducial vector using Weyl-Heisenberg operators.
+    """
+    X = shift(d)
+    Z = clock(d)
+    
+    povm_elements = []
+    # Displacement operators D_{a,b} = X^a Z^b (ignoring phase factors for POVM)
+    for a in range(d):
+        for b in range(d):
+            # D = (X^a) @ (Z^b)
+            op = np.linalg.matrix_power(X, a) @ np.linalg.matrix_power(Z, b)
+            vec = op @ fiducial_vector
+            # POVM element E_k = 1/d * |psi><psi|
+            povm_elements.append((1/d) * np.outer(vec, vec.conj()))
+            
+    return povm_elements
+
+def sic_condition_jax(channel_func, d):
+    """
+    channel_func: Deine 'channel_ready' Funktion (lambda), die nur ein Argument (rho) nimmt.
+    """
+
+    fid_vector = jnp.array(fid_vector_list[d-2]) 
+
+    fid_vector = fid_vector / jnp.linalg.norm(fid_vector)
+    
+    sic_povm_np = get_sic_povm(d, fid_vector) 
+    sic_povm = [jnp.array(M) for M in sic_povm_np]
+    
+    temp_sic = True
+
+    for i in sic_povm:
+        channel_out = channel_func(i)
+        
+        temp = (d + 1) * channel_out - jnp.eye(d) / d
+
+        if not is_positive_semidefinite_jax(temp):
+            temp_sic = False
+            # Optional: break, um Zeit zu sparen, wenn einer fehlschlägt
+            break 
+
+    if temp_sic:
+        print('SICs say channel is entanglement breaking')
+    else:
+        print('SICs can not make a statement')
+        
+    return temp_sic
+\end{lstlisting}
+
+\begin{lstlisting}[language = python, caption = {Optimization of one PPT channel with an SDP program using the Breuer-Hall map}, label = {lst:breuer}, basicstyle=\ttfamily\scriptsize, % Shrinks the font size
+    lineskip=-1pt,                   % Pulls the lines of code closer together
+    aboveskip=10pt,                  % Reduces white space above the box
+    belowskip=10pt                   % Reduces white space below the box
+]
+def optimize_channel(target, J_fixed, rho_fixed, d, U):
+    """
+    Optimizes either T1 or T2 to minimize Tr(rho * M(T1, T2)).
+    
+    Parameters:
+    - target: String, either 'T1' or 'T2' (the variable to optimize).
+    - J_fixed: numpy array (d^2 x d^2), the Choi matrix of the fixed channel.
+    - rho_fixed: numpy array (d^2 x d^2), the fixed state (eigenvector).
+    - d: Integer, dimension of the subsystem (must be even, >= 4).
+    
+    Returns:
+    - min_val: The minimum expectation value found.
+    - J_opt: The Choi matrix of the optimized channel.
+    """
+    d2 = d**2
+    P_reshuffle, P_PT, P_TrB = build_linear_maps(d)
+    P_reshuffle_inv = P_reshuffle.T # Inverse of permutation is its transpose
+    
+    # Define the CVXPY Variable for the target Choi matrix
+    J_var = cp.Variable((d2, d2), hermitian=True)
+    
+    # Convert fixed Choi to Superoperator
+    K_fixed = (P_reshuffle @ J_fixed.flatten()).reshape((d2, d2), order = 'C')
+    
+    # Convert variable Choi to Superoperator
+    K_var = cp.reshape(P_reshuffle @ cp.vec(J_var, order='C'), (d2, d2), order = 'C')
+    
+    # Compose channels (Matrix multiplication of superoperators)
+    if target == 'T1':
+        # T1 is var, T2 is fixed. K_composed = K_var @ K_fixed
+        K_composed = K_var @ K_fixed
+    elif target == 'T2':
+        # T2 is var, T1 is fixed. K_composed = K_fixed @ K_var
+        K_composed = K_fixed @ K_var
+    else:
+        raise ValueError("Target must be 'T1' or 'T2'")
+        
+    # Convert composed Superoperator back to Choi matrix
+    J_composed = cp.reshape(P_reshuffle_inv @ cp.vec(K_composed, order='C'), (d2, d2))
+    
+    # --- Apply Breuer-Hall Map to J_composed ---
+    #U = get_breuer_hall_U(d)
+    I_U = np.kron(np.eye(d), U)
+    
+    # J_composed is TP, so Tr_B(J) x I = I_d^2
+    term1 = np.eye(d2)
+    term2 = J_composed
+    
+    # Apply (I x U) * J_composed^{T_B} * (I x U^dagger)
+    J_comp_PT = cp.reshape(P_PT @ cp.vec(J_composed, order='C'), (d2, d2), order = 'C')
+    term3 = I_U @ J_comp_PT @ I_U.conj().T
+    
+    M = term1 - term2 - term3
+    
+    # --- Objective ---
+    objective = cp.Minimize(cp.real(cp.trace(rho_fixed @ M)))
+    
+    # --- Constraints for J_var to be a valid PPT Channel ---
+    constraints = []
+    constraints.append(J_var >> 0) # Completely Positive
+    
+    # Partial Transpose Constraint (PPT)
+    J_var_PT = cp.reshape(P_PT @ cp.vec(J_var, order='C'), (d2, d2), order = 'C')
+    constraints.append(J_var_PT >> 0)
+    
+    # Trace Preserving Constraint: Tr_B(J) = I_d
+    TrB_J_var = cp.reshape(P_TrB @ cp.vec(J_var, order='C'), (d, d), order = 'C')
+    constraints.append(TrB_J_var == np.eye(d))
+    
+    # --- Solve ---
+    prob = cp.Problem(objective, constraints)
+    prob.solve(solver=cp.SCS) # SCS or MOSEK recommended for large complex SDPs
+    
+    return prob.value, J_var.value
+
+\end{lstlisting}
+
+\begin{lstlisting}[language = python, caption = Testing the PPT$^2$ conjecture with SDPs, label={lst:testing-ppt-2}, basicstyle=\ttfamily\scriptsize, % Shrinks the font size
+    lineskip=-1pt,                   % Pulls the lines of code closer together
+    aboveskip=10pt,                  % Reduces white space above the box
+    belowskip=10pt                   % Reduces white space below the box
+]
+    import numpy as np
+import cvxpy as cp
+from scipy.optimize import minimize
+import autograd.numpy as anp
+from autograd import value_and_grad
+from scipy.linalg import qr
+import scipy.sparse as sp
+
+def get_random_breuer_hall_U(d):
+    """
+    Generates a random antisymmetric unitary matrix U for the Breuer-Hall map.
+    """
+    # 1. Construct the trivial antisymmetric unitary (your original Omega)
+    Omega = np.zeros((d, d), dtype=complex)
+    for i in range(d // 2):
+        Omega[2*i, 2*i+1] = 1.0
+        Omega[2*i+1, 2*i] = -1.0
+        
+    # 2. Generate a random complex Gaussian matrix
+    G = np.random.randn(d, d) + 1j * np.random.randn(d, d)
+    
+    # 3. Extract a random unitary matrix V using QR decomposition
+    V, _ = qr(G)
+    
+    # 4. Construct the random antisymmetric unitary
+    # CRITICAL: Use V.T (transpose), NOT V.conj().T (Hermitian conjugate)
+    U_random = V @ Omega @ V.T
+    
+    return U_random
+
+def generate_random_density_matrix(dim):
+    """
+    Generiert eine zufällige Dichtematrix der Dimension (dim x dim).
+    """
+    G = np.random.randn(dim, dim) + 1j * np.random.randn(dim, dim)
+    rho_unnormalized = G @ G.conj().T
+    rho = rho_unnormalized / np.trace(rho_unnormalized)
+    return rho
+
+def generate_random_boundary_ppt_channel(d, P_PT, P_TrB):
+    d2 = d**2
+
+    G = np.random.randn(d2, d2) + 1j * np.random.randn(d2, d2)
+    H = G + G.conj().T
+    
+
+    C_PT = cp.reshape(P_PT @ cp.vec(C, order='C'), (d2, d2), order='C')
+    constraints.append(C_PT >> 0)
+    
+    TrB_C = cp.reshape(P_TrB @ cp.vec(C, order='C'), (d, d), order='C')
+    constraints.append(TrB_C == np.eye(d))
+    
+    objective = cp.Minimize(cp.real(cp.trace(H @ C)))
+    prob = cp.Problem(objective, constraints)
+    prob.solve(solver=cp.SCS) 
+    
+    return C.value
+
+
+def optimize_U_scalable(rho, J_PT, d, Omega):
+    """
+    Optimizes the antisymmetric unitary U for any dimension d using the Cayley Transform.
+    """
+    # Force all constants into autograd's tracked array format to prevent primitive leaks
+    I_d = anp.eye(d, dtype=complex)
+    Omega_anp = anp.array(Omega, dtype=complex)
+    rho_anp = anp.array(rho, dtype=complex)
+    J_PT_anp = anp.array(J_PT, dtype=complex)
+    
+    def objective(params):
+        # 1. Map flat array to complex matrix Z
+        Z_real = anp.reshape(params[:d**2], (d, d))
+        Z_imag = anp.reshape(params[d**2:], (d, d))
+        Z = Z_real + 1j * Z_imag
+        
+        # 2. Map Z to Hermitian H
+        H = Z + anp.conj(anp.transpose(Z))
+        
+        # 3. Map Hermitian H to Unitary V via Cayley Transform (Bypassing expm)
+        iH = 1j * H
+        V = anp.matmul(I_d - iH, anp.linalg.inv(I_d + iH))
+        
+        # 4. Map V to Antisymmetric Unitary U
+        U = anp.matmul(V, anp.matmul(Omega_anp, anp.transpose(V)))
+        
+        # 5. Construct tensor operator (autograd safe)
+        I_U = anp.reshape(anp.einsum('ij,kl->ikjl', I_d, U), (d**2, d**2))
+        I_U_dag = anp.conj(anp.transpose(I_U))
+        
+        # 6. Calculate objective trace
+        val = anp.real(anp.trace(anp.matmul(rho_anp, anp.matmul(I_U, anp.matmul(J_PT_anp, I_U_dag)))))
+        return -val
+
+    x0 = np.random.randn(2 * d**2)
+    
+    res = minimize(value_and_grad(objective), x0, jac=True, method='BFGS')
+    
+    # Reconstruct optimal U purely in NumPy
+    Z_real_opt = res.x[:d**2].reshape((d, d))
+    Z_imag_opt = res.x[d**2:].reshape((d, d))
+    Z_opt = Z_real_opt + 1j * Z_imag_opt
+    H_opt = Z_opt + Z_opt.conj().T
+    
+    # Cayley Transform for the final output
+    I_np = np.eye(d, dtype=complex)
+    iH_opt = 1j * H_opt
+    V_opt = (I_np - iH_opt) @ np.linalg.inv(I_np + iH_opt)
+    U_opt = V_opt @ Omega @ V_opt.T
+    
+    return U_opt
+
+def update_rho(M_matrix):
+    """
+    Updates the variational state rho by finding the eigenvector 
+    corresponding to the smallest eigenvalue of M.
+    
+    Parameters:
+    - M_matrix: A (d^2 x d^2) numpy array representing the Hermitian matrix M.
+    
+    Returns:
+    - rho_new: The updated (d^2 x d^2) density matrix.
+    - min_eval: The smallest eigenvalue (for tracking progress).
+    """
+    # 1. Calculate eigenvalues (w) and eigenvectors (v)
+    # eigh guarantees w is sorted ascending, and v[:, i] is the i-th eigenvector
+    w, v = np.linalg.eigh(M_matrix)
+    
+    # 2. Extract the smallest eigenvalue and its eigenvector
+    min_eval = w[0]
+    psi_min = v[:, 0]  # The column vector corresponding to w[0]
+    
+    # 3. Construct the new density matrix: rho = |psi_min><psi_min|
+    # Using outer product of the vector and its complex conjugate
+    rho_new = np.outer(psi_min, psi_min.conj())
+    
+    return rho_new, min_eval
+
+
+def build_linear_maps(d):
+    """
+    Constructs the permutation matrices using ultra-fast, memory-safe 
+    vectorized operations in COO format. No nested loops.
+    """
+    d2 = d**2
+    d4 = d**4
+    
+    # -------------------------------------------------------------
+    # 1. P_reshuffle (K_{kl, ij} = J_{ik, jl})
+    # -------------------------------------------------------------
+    # Generate all combinations of (i, j, k, l)
+    i, j, k, l = np.mgrid[0:d, 0:d, 0:d, 0:d]
+    
+    # Flatten them to 1D arrays
+    i = i.flatten()
+    j = j.flatten()
+    k = k.flatten()
+    l = l.flatten()
+    
+    # Calculate row and column indices
+    row_K = (k*d + l)*d2 + (i*d + j)
+    col_J = (i*d + k)*d2 + (j*d + l)
+    vals_K = np.ones(d4)
+    
+    # Build sparse matrix directly
+    P_reshuffle = sp.coo_matrix((vals_K, (row_K, col_J)), shape=(d4, d4)).tocsr()
+    
+    # -------------------------------------------------------------
+    # 2. P_PT (Partial Transpose: J^{T_B}_{ik, jl} = J_{il, jk})
+    # -------------------------------------------------------------
+    # The indices i, j, k, l are already defined above
+    row_PT = (i*d + k)*d2 + (j*d + l)
+    col_PT = (i*d + l)*d2 + (j*d + k)
+    vals_PT = np.ones(d4)
+    
+    P_PT = sp.coo_matrix((vals_PT, (row_PT, col_PT)), shape=(d4, d4)).tocsr()
+    
+    # -------------------------------------------------------------
+    # 3. P_TrB (Partial Trace on B: Tr_B(J)_{i,j} = sum_k J_{ik, jk})
+    # -------------------------------------------------------------
+    # For Partial Trace, we only iterate over i, j, k
+    i_tr, j_tr, k_tr = np.mgrid[0:d, 0:d, 0:d]
+    
+    i_tr = i_tr.flatten()
+    j_tr = j_tr.flatten()
+    k_tr = k_tr.flatten()
+    
+    row_TrB = i_tr*d + j_tr
+    col_TrB = (i_tr*d + k_tr)*d2 + (j_tr*d + k_tr)
+    vals_TrB = np.ones(d**3) # Only d^3 elements
+    
+    P_TrB = sp.coo_matrix((vals_TrB, (row_TrB, col_TrB)), shape=(d2, d4)).tocsr()
+    
+    return P_reshuffle, P_PT, P_TrB
+
+def get_breuer_hall_U(d):
+    """Constructs the antisymmetric unitary U for the Breuer-Hall map."""
+    U = np.zeros((d, d), dtype=complex)
+    for i in range(d // 2):
+        U[2*i, 2*i+1] = 1.0
+        U[2*i+1, 2*i] = -1.0
+    return U
+
+def optimize_channel(target, J_fixed, rho_fixed, d, U):
+    """
+    Optimizes either T1 or T2 to minimize Tr(rho * M(T1, T2)).
+    
+    Parameters:
+    - target: String, either 'T1' or 'T2' (the variable to optimize).
+    - J_fixed: numpy array (d^2 x d^2), the Choi matrix of the fixed channel.
+    - rho_fixed: numpy array (d^2 x d^2), the fixed state (eigenvector).
+    - d: Integer, dimension of the subsystem (must be even, >= 4).
+    
+    Returns:
+    - min_val: The minimum expectation value found.
+    - J_opt: The Choi matrix of the optimized channel.
+    """
+    d2 = d**2
+    P_reshuffle, P_PT, P_TrB = build_linear_maps(d)
+    P_reshuffle_inv = P_reshuffle.T # Inverse of permutation is its transpose
+    
+    # Define the CVXPY Variable for the target Choi matrix
+    J_var = cp.Variable((d2, d2), hermitian=True)
+    
+    # Convert fixed Choi to Superoperator
+    K_fixed = (P_reshuffle @ J_fixed.flatten()).reshape((d2, d2), order = 'C')
+    
+    # Convert variable Choi to Superoperator
+    K_var = cp.reshape(P_reshuffle @ cp.vec(J_var, order='C'), (d2, d2), order = 'C')
+    
+    # Compose channels (Matrix multiplication of superoperators)
+    if target == 'T1':
+        # T1 is var, T2 is fixed. K_composed = K_var @ K_fixed
+        K_composed = K_var @ K_fixed
+    elif target == 'T2':
+        # T2 is var, T1 is fixed. K_composed = K_fixed @ K_var
+        K_composed = K_fixed @ K_var
+    else:
+        raise ValueError("Target must be 'T1' or 'T2'")
+        
+    # Convert composed Superoperator back to Choi matrix
+    J_composed = cp.reshape(P_reshuffle_inv @ cp.vec(K_composed, order='C'), (d2, d2), order = 'C')
+    
+    # --- Apply Breuer-Hall Map to J_composed ---
+    #U = get_breuer_hall_U(d)
+    I_U = np.kron(np.eye(d), U)
+    
+    # J_composed is TP, so Tr_B(J) x I = I_d^2
+    term1 = np.eye(d2)
+    term2 = J_composed
+    
+    # Apply (I x U) * J_composed^{T_B} * (I x U^dagger)
+    J_comp_PT = cp.reshape(P_PT @ cp.vec(J_composed, order='C'), (d2, d2), order = 'C')
+    term3 = I_U @ J_comp_PT @ I_U.conj().T
+    
+    M = term1 - term2 - term3
+    
+    # --- Objective ---
+    objective = cp.Minimize(cp.real(cp.trace(rho_fixed @ M)))
+    
+    # --- Constraints for J_var to be a valid PPT Channel ---
+    constraints = []
+    constraints.append(J_var >> 0) # Completely Positive
+    
+    # Partial Transpose Constraint (PPT)
+    J_var_PT = cp.reshape(P_PT @ cp.vec(J_var, order='C'), (d2, d2), order = 'C')
+    constraints.append(J_var_PT >> 0)
+    
+    # Trace Preserving Constraint: Tr_B(J) = I_d
+    TrB_J_var = cp.reshape(P_TrB @ cp.vec(J_var, order='C'), (d, d), order = 'C')
+    constraints.append(TrB_J_var == np.eye(d))
+    
+    # --- Solve ---
+    prob = cp.Problem(objective, constraints)
+    prob.solve(solver=cp.SCS) # SCS or MOSEK recommended for large complex SDPs
+    
+    return prob.value, J_var.value
+
+def calculate_M_matrix(J1, J2, U, d=6):
+    d2 = d**2
+    P_reshuffle, P_PT, P_TrB = build_linear_maps(d)
+    
+    # 1. Compose exactly like the SDP
+    K1 = (P_reshuffle @ J1.flatten()).reshape((d2, d2), order='C')
+    K2 = (P_reshuffle @ J2.flatten()).reshape((d2, d2), order='C')
+    
+    # K2 is applied first, then K1. Let's match your T1/T2 logic.
+    # In your loop: min_val, J1 = optimize_channel('T1', J2...) -> K_composed = K_var @ K_fixed -> K1 @ K2
+    # Wait, if T1 is applied after T2, it's K1 @ K2.
+    K_composed = K1 @ K2 
+    
+    J_composed = (P_reshuffle.T @ K_composed.flatten()).reshape((d2, d2), order='C')
+    
+    # 2. PT exactly like the SDP
+    J_comp_PT = (P_PT @ J_composed.flatten()).reshape((d2, d2), order='C')
+    
+    # 3. Breuer-Hall
+    term1 = np.eye(d2)
+    term2 = J_composed
+    I_U = np.kron(np.eye(d), U)
+    term3 = I_U @ J_comp_PT @ I_U.conj().T
+    
+    M = term1 - term2 - term3
+    
+    # Ensure Hermitian (SCS numerical noise can make it slightly non-Hermitian)
+    M = (M + M.conj().T) / 2.0
+    
+    return M
+
+
+d = 6
+stop = False
+# Initialize a random maximally mixed Choi matrix as a starting point
+# J_fixed = np.eye(d**2) / d 
+# rho_fixed = np.eye(d**2) / (d**2)
+# J2 = J_fixed
+# rho = rho_fixed
+for j in range(10000):
+    if stop: 
+        break
+    print(j)
+    
+    rho_fixed = generate_random_density_matrix(d**2)
+    P_reshuffle, P_PT, P_TrB = build_linear_maps(d)
+    J_fixed = generate_random_boundary_ppt_channel(d, P_PT, P_TrB)
+    rho = rho_fixed
+    J2 = J_fixed
+    
+    U = get_random_breuer_hall_U(d)
+    n = 3
+    #print('d=', d)
+    for i in range(n):
+        # Optimize T1 while keeping T2 fixed
+        _, J1 = optimize_channel('T1', J2, rho, d, U) # Discard prob.value
+        min_val = np.real(np.trace(rho @ calculate_M_matrix(J1, J2, U, d)))
+        _, J2 = optimize_channel('T2', J1, rho, d, U) # Discard prob.value
+        min_val = np.real(np.trace(rho @ calculate_M_matrix(J1, J2, U, d)))
+        
+        d2 = d**2
+        K1 = (P_reshuffle @ J1.flatten()).reshape((d2, d2), order='C')
+        K2 = (P_reshuffle @ J2.flatten()).reshape((d2, d2), order='C')
+        K_composed = K1 @ K2
+        J_composed = (P_reshuffle.T @ K_composed.flatten()).reshape((d2, d2), order='C')
+        J_PT = (P_PT @ J_composed.flatten()).reshape((d2, d2), order='C')
+        
+        if i % 4 == 0 and i != 0:
+            #print(i)
+            U_new = optimize_U_scalable(rho, J_PT, d, get_breuer_hall_U(d))
+            val_new = np.real(np.trace(rho @ calculate_M_matrix(J1, J2, U_new, d)))
+            if val_new < min_val:
+                U = U_new
+        
+        #print('old min val', min_val)
+        rho, min_val = update_rho(calculate_M_matrix(J1, J2, U, d))
+    
+        if min_val < -1e-3:
+            print('weeee ddidd ittt!!!!!!1')
+            print(i, min_val)
+            print(J1, J2, U, rho)
+            stop = True
+            break
+    print(min_val)
+\end{lstlisting}
+

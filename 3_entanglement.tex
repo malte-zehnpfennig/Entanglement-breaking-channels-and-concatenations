@@ -1,0 +1,213 @@
+\chapter{Entanglement and positive Maps}\label{ch:entanglement}
+\subsubsection{$n$-positive maps}
+If a state $\rho =\sum_i p_i \rho_i^A\otimes \rho_i^B \in \m D(\hi_A \otimes \hi_B)$ is separable and $T$ is a positive map from $\B(\hi_A)$ to $\B(\hi_B)$, then $(T\otimes \id)(\rho)$ is again positive semidefinite. Consequently, every positive map $T$ provides a necessary condition for the separability of a density matrix. Clearly, for the criterion to be non-trivial, the map $T$ should not be completely positive since in this case $(T\otimes \1)(\rho)$ is positive even for entangled states. Again, it does not matter whether one considers $T \otimes \id $ or $\id \otimes T$, in the sense that both maps detect the same entangled states. To see this, one can again consider the swapping mechanism from above. For sufficiency, all positive maps must be considered:
+\begin{theorem}\label{thm:positive-maps}[\cite{Horodecki1996} theorem 2]
+    Let $\rho \in \m D(\C^d \otimes \C^{d'})$, then $\rho$ is separable if and only if $(T\otimes \id_{d'})(\rho)\geq 0$ for all positive maps $T \in \m B(\m M_d, \m M_{d'})$.{}
+\end{theorem}
+More generally, it can be shown that
+\begin{theorem}[$n$-positive maps and entanglement \cite{Terhal2000}]\label{thm:n-pos}
+    A density matrix has Schmidt number at most $n$ if and only if for all $n$-positive maps $T$ it is $(T \otimes \1)\rho \geq 0$. {}
+\end{theorem}
+
+An example of a positive, but not completely positive map is the transposition $\vartheta: X\mapsto X^T$ map since it preserves the spectrum, but for example
+\begin{align}
+    (\vartheta \otimes \id)(\pr \Omega) = \sum_{ij}\ket{j}\bra{i}\otimes \ket{i}\bra{j}
+\end{align}
+has a negative eigenvalue of $-1$ on the subspace spanned by $\{\ket{01},\ket{10}\}$ \cite{Peres1996}. The transposition criterion is closely linked to the concept of decomposable maps:
+\begin{definition}[Decomposability]
+    A positive map $T\in \m B(\m M_d , \m M_{d'})$ is called decomposable if there are completely postive maps $T_1, T_2 \in \m{CP}(\C^d,\C^{d'})$ such that $T = T_1+T_2 \circ \vartheta_{d_1}$. Otherwise, it is indecomposable.
+\end{definition}
+If $T$ is decomposable, then the only way that $(T\otimes \id)(\rho)$ can have a negative eigenvalue is if $(\vartheta \otimes \id)(\rho)$ has a negative eigenvalue. Hence, a decomposable positive map can detect entanglement if and only if it is also detected by partial transposition. The transposition criterion was the first separability condition for mixed states. For sufficiently small systems it is also sufficient for separability:
+\begin{theorem}[Positive Partial Transposition (PPT) criterion \cite{Horodecki1996}]Let $\rho \in \m D(\C^{d_A}\otimes \C^{d_B})$ be a density matrix. If $(\vartheta_{d_A}\otimes \id_{d_B})(\rho)$ is not positive, then $\rho$ is entangled. The converse holds true if $d_Ad_B \leq 6$.{}\label{thm:PPT}
+\end{theorem}
+The proof of sufficiency in \cite{Horodecki1996} relies on results from \cite{Stormer1963} and \cite{Woronowicz1976} that show that every positive map $\m M_2 \rightarrow \m M_2$ and $\m M_2 \rightarrow \m M_3$ is decomposable, respectively. The rough idea in both of these papers was to consider extremal rays of positive maps and show that these are decomposable, and then using Krein-Milman theorem to extend this to all positive maps\footnote{This is not straightforward since the set of positive map is e.g. not compact, for more details the reader is referred to \cite{Horodecki1996}.}. By then using theorem \ref{thm:positive-maps}, the PPT theorem \ref{thm:PPT} is proven. In systems of size $3\times 3$ (and thus also in even higher-dimensional systems), there are entangled states with a positive partial transpose, this is also shown in \cite{Woronowicz1976}.
+
+The notion of positive maps is related to that of so-called witnesses:
+\begin{prop}[Entanglement witnesses]
+A density operator $\rho \in \mathcal{M}_d(\mathbb{C}) \otimes \mathcal{M}_{d'}(\mathbb{C})$ has Schmidt number at least $n+1$ iff there exists a Hermitian operator $W \in \mathcal{M}_d(\mathbb{C}) \otimes \mathcal{M}_{d'}(\mathbb{C})$ such that $\operatorname{tr}[W\rho] < 0$ but $\bra{\psi}W\ket{\psi} \geq 0$ for all vectors $\ket{\psi} \in \mathbb{C}^d \otimes \mathbb{C}^{d'}$ with Schmidt rank $n$.
+\end{prop}. Such a matrix $W$ is said to be an witness for entanglement in the case $n=1$.
+\begin{proof}
+Use theorem \ref{thm:n-pos} together with the hyperplane separation version of the Hahn-Banach theorem.
+\end{proof}
+
+\begin{prop}
+Let $\mathcal{E}$ be positive but not completely positive. Let $\rho \in \mathcal{D}(\mathcal{H}_{AB})$ be such that $(\text{id} \otimes \mathcal{E})(\rho) \not\geq 0$. Then the corresponding entanglement witness to $\mathcal{E}$ for $\rho$ is 
+\begin{align*}
+    W &:= (\text{id} \otimes \mathcal{E}^*)(\ket{\eta}\bra{\eta})
+\end{align*}
+where $\ket{\eta}$ is an eigenvector of $(\text{id} \otimes \mathcal{E})(\rho)$ for an eigenvalue $\lambda < 0$.
+\end{prop}
+
+\begin{proof}
+It is $
+    \text{tr}[W\rho] = \bra{\eta}(\text{id} \otimes \mathcal{E})(\rho)\ket{\eta} = \lambda < 0$.
+\end{proof}
+
+
+\begin{definition}
+An entanglement witness $W'$ is finer than $W$ if and only if it detects all entangled states detected by $W$ and at least one additional entangled state. It is optimal if there is no finer witness. Correspondingly, a positive map is optimal if its associated witness is.
+\end{definition}
+
+Another example of a positive, but not completely positive map is the Breuer-Hall map:
+\begin{definition}[Breuer-Hall map \cite{Breuer2006, Hall2006}]If $U \in \m M_d$ is a skew-symmetric matrix, i.e. $U^\text T = -U$, and $U^*U\leq 1$ holds, then a map $T_\text{BH}:\m M_d \rightarrow \m M_d, X \mapsto \tr[X]\1_d - X - UX^\text TU^*$ is called a Breuer-Hall map.
+{}
+\end{definition}\noindent
+Note that skew-symmetric unitary matrices only exist in even dimensions since $\det(U^\text T)=\det(U)=\det(-U)=(-1)^d\det(U)$ and unitarity sets $\vert \det(U)\vert = 1$. Consequently, Breuer-Hall maps with proper unitaries $U$ also only exist in even dimensions.
+\begin{prop}[Breuer--Hall map \cite{Breuer2006, Hall2006}]\label{prop:breuer}
+    Breuer-Hall maps $T_\text{BH}(X) = \tr[X]\1_d - X - UX^\text TU^*$ are positive, but not completely positive if $d>2$. If $U$ is additionally unitary, then $T_\text{BH}$ is indecomposable.
+\end{prop}
+\begin{proof}
+    It needs to be shown that $T_\text{BH}(\pr \psi)=\1- \pr \psi - U\pr{\overline \psi}U^* \geq 0$ for all unit vectors $\ket \psi$. Show that $\pr \psi$ and $U\pr{\overline \psi}U^*$ are Hilbert-Schmidt orthogonal. This implies, for $\ket \phi\coloneqq U\ket{\overline \psi}$, that $\pr \psi + \pr \phi \leq \1$ since due to $U^*U \leq \1$ it is $\braket{\phi}{\phi} \leq 1$. The Choi matrix of the Breuer-Hall map is $C = \1_{d^2}-\pr \Omega - (\1 \otimes U)\mathbb F(\1 \otimes U^*)$, which is not positive since 
+    \begin{align*}
+        \bra \Omega C \ket \Omega &= d -d^2 - \sum_{ij}(\bra i \otimes \bra i U)\mathbb F (\ket j \otimes U^* \ket j) = d-d^2 - \sum_{ij}(\bra i \otimes \bra i U)(U^*\ket j \otimes j)\\
+        &= d-d^2 -\sum_{ij}\braket{U^\text Tj}{i} \bra{i} U\ket{j}= d-d^2 -\sum_{j}\bra j \overline U U \ket j = 2d-d^2<0 \text{ if }d>2.
+    \end{align*}
+    Now let $U$ be unitary and assume that $T_\text{BH}(X) = \Phi_1(X)+\Phi_2(X^T)$ is decomposable for completely positive maps $\Phi_1$ and $\Phi_2$. Let $\ket \psi$ be an arbitrary unit vector, then $\bra \psi T(\pr \psi) \ket \psi = 1-1-0 = 0$. It follows that $\bra \psi \Phi_1(\pr \psi)\ket \psi = \bra \psi \Phi_2(\pr {\overline \psi})\ket \psi=0$ since the $\Phi_i$ are in particular positive. Since $\Phi_1$ is completely positive, there are Kraus operators $K_i$ such that $\Phi_1(\pr \psi) = \sum_i K_i\pr \psi K_i^*$. Hence, $\bra \psi \Phi_1(\pr \psi)\ket \psi = \sum_i \vert \bra \psi K_i \ket \psi\vert ^2 = 0 \Rightarrow \bra \psi K_i \ket \psi = 0$ for all unit vectors $\psi$, implying $K_i = 0$ for all $i$ and thus $\Phi_1 \equiv 0$. Consequently, $T_\text{BH}=\Phi_2\circ \vartheta$ and $T_\text{BH}\circ \vartheta = \Phi_2$ is completely positive. By using $(\id \otimes \vartheta)(\pr \Omega) = (\vartheta\otimes \id)(\pr \Omega)$ one has $C_{T_\text{BH}\circ\vartheta}=C_{T_\text{BH}}^{T_A} = \1_{d^2} - \mathbb F - (\1 \otimes U)\pr \Omega (\1 \otimes U^*)$. Test positivity on the vector $\ket{\phi}\coloneqq (\1 \otimes U)\ket \Omega$:
+    \begin{align*}
+        \bra{\phi}C_\text{BH}^{T_A}\ket{\phi} = d- \sum_{ij}U_{ij}U_{ij}^*-d^2 = 2d-d^2,
+    \end{align*}
+    which is again negative for $d>2$, resulting in the desired contradiction.
+\end{proof}
+To summarize, the Breuer-Hall maps make up a particularly nice positive map to test entanglement is that i) they have a 'tunable parameter': the skew-symmetric $U$, ii) they are indecomposable, that is, they can detect PPT entangled states and iii) they are optimal \cite{hall2006constructions}.
+
+There are many more positive, but not completely positive maps, see e.g. \cite{wolf2012quantum}.
+
+\subsubsection{Other entanglement criteria}
+Besides positive maps, there are many criteria that are typically written in different ways.
+\begin{prop}[Realignment criterion, \cite{chen2003matrix}]
+    Let $\rho \in \m D(\C^d\otimes \C^d)$ be a bipartite density matrix. If $\sum_{i=1}^r \lambda_i >1$, then $\rho$ is entangled. The Schmidt values $\lambda_i$ are equivalently the singular values of the realigned matrix $\rho^R\coloneqq (\rho_{ij,kl})_{ik,jl}${}
+\end{prop}
+
+The Pauli matrices \cite{Pauli1927} 
+\begin{align}
+    \sigma_0 = \1, \sigma_x = \begin{pmatrix}
+        1 & 0 \\
+        0 & 1
+    \end{pmatrix}, \sigma_y = \begin{pmatrix}
+        0 & -i\\
+        i & 0
+    \end{pmatrix}\text{ and } \sigma_z = \begin{pmatrix}
+        1 & 0 \\
+        0 & -1
+    \end{pmatrix}
+\end{align}
+are extremely useful in $d=2$ since they are Hermitian, unitary, and form an orthogonal basis for $\text{Herm}(\C^2)$ with respect to the Hilbert-Schmidt inner product. Generalizations of such matrices for higher dimensions are thus highly sought after. A generalization where the matrices are at least unitary is, e.g., given by the Heisenberg-Weyl matrices:
+\begin{definition}[Heisenberg-Weyl basis \cite{Weyl1927}]
+    Let $k,l \in \{0, \dots, d-1\}$ and $W_{kl}\coloneqq \sum_{j=0}^{d-1}\omega ^{jk}\ket{j}\bra{j\oplus l}$, where $\omega\coloneqq \exp(2\pi i/d)$ is the $d$-th root of unity and $\oplus$ is addition modulus $d$.
+\end{definition}\noindent
+The set $\{W_{kl}\}_{kl}$ is a unitary and orthogonal basis for $\m M_d$: $\trr{W_{kl}^*W_{k'l'}} = d \delta_{kk‘}\delta_{ll'}$. For a proof of this and more properties see for example \cite{hiesmayrBipartiteBoundEntanglement2025} for a recent review.  Higher-dimensional generalizations where the matrices are Hermitian instead of unitary are, e.g., the generalized Gell-Mann matrices \cite{Hioe1981}. 
+
+If the rank of a bipartite density matrix is sufficiently small, then
+\begin{prop}[Necessary rank condition for separability]\label{prop:rank-condition}Any separable matrix $\text{SEP}(\C^d,\C^{d'})$ fulfills $\rk(X)\geq \max\{\rk(X^A),\rk(X^B)\}$.{}
+\end{prop}
+\begin{proof}
+    It is mentioned in theorem 1 of \cite{Horodecki2003} that if the rank condition above holds then $\rho$ is not distillable. Since separable states are in particular PPT and thus not distillable by \cite{Horodecki1998}, the statement follows.
+\end{proof}
+\begin{prop}[Low-Rank Separability, theorem 1 in \cite{Horodecki2000}]\label{prop:low-rank}
+Let $\rho \in \mathcal{D}(\mathbb{C}^d \otimes \mathbb{C}^{d'})$ be a bipartite $d\times d'$ density matrix. If $\rk(\rho) \leq \min(d,d')$, then PPT is also sufficient for separability
+\end{prop}
+
+
+
+
+
+
+
+
+
+
+\subsubsection{Isotropic States}
+For higher dimensions, detecting entanglement is generally a hard task. One class of states for which there are efficient necessary and sufficient criteria is that of isotropic states:
+\begin{definition}[Isotropic state \cite{Horodecki1999}, chapter 5]
+    A density matrix $\rho \in \m D(\C^d \otimes \C^d)$ is isotropic if for all unitaries $U\in \m U(d)$ one has $(U\otimes U^*)\rho(U\otimes U^*)^* = \rho$. The definition extends similarly to arbitrary matrices.
+\end{definition}
+
+On a bipartite system $\hi \otimes \hi$, define
+    \begin{align}
+        P^+\coloneqq P^\text{sym}\coloneqq \frac{1}{2}(\1+\mathbb F)=\pr{\phi^+} \text{ and }P^- \coloneqq P^\text{asy}\coloneqq \frac{1}{2}(\1-\mathbb F)=\1-\pr{\phi^+}. 
+    \end{align}
+Note that the swapping matrix $\mathbb F = \sum_{ij}\ket{i}\bra j\otimes \ket j \bra i$ clearly fulfills $\mathbb F^2 = \1$ and has thus only $+1$ and $-1$ as eigenvalues with respective subspaces $S_\pm$. $P^\text{sym}$ are $P^\text{asym}$ are exactly the projectors on these subspaces since $\mathbb  F = P^\text{sym}-P^\text{asy}$.
+\begin{definition}[Werner state]
+    If a state $W_p \in \m D(\C^d \otimes \C^d)$ is of the form 
+    \begin{align*}
+        W_p= p \frac{2}{d(d+1)}P^+ + (1-p)\frac{2}{d(d-1)}P^- = \frac{d-2p+1}{d(d^2-1)}\1 + \frac{2pd-d-1}{d(d^2-1)}\mathbb F
+    \end{align*}
+    for some $p\in[0,1]$, then it is a Werner state.
+\end{definition}\noindent
+$W_p \geq 0$ is obvious. Using $\trr{\mathbb F} = d$ and $\trr{P^\pm}\coloneqq (d^2\pm d)/2$ shows that they indeed have unit trace.
+\begin{lemma}[\cite{werner1989quantum}] Werner states are invariant under unitary transformations of the form $U\otimes U$, i.e., for all $U \in \m U(d)$ and Werner states $W_p \in \m D(\C^d \otimes \C^d)$ it is 
+\begin{align*}
+    (U\otimes U)W_p (U\otimes U)^* = W_p.
+\end{align*}
+Additionally, any such state is a Werner state.
+\end{lemma}
+\begin{proof}
+    It is sufficient to show the invariance of $\1$ and $\mathbb F$. The former is trivial and for the latter consider $
+        (U\otimes U)\mathbb F(U\otimes U)^* = \sum_{ij}U\ket i \bra j U^* \otimes U\ket j \bra i U^* = \sum_{ij}G_{ij}\otimes G_{ij}^*$ where $U\ket i \bra j U^*\eqqcolon G_{ij}$. Now, $\{G_{ij}\}_{ij}$ is an orthonormal basis and it is $\mathbb F = \sum_{ij}G_{ij}\otimes G_{ij}^*$ for any such basis. For the converse, the reader is refered to the literature.
+\end{proof}
+\begin{lemma}
+    A state is isotropic if and only if it is the partial transpose of a Werner state: $W_p^{T_B} = \alpha(p)\1 + \beta(p)\pr \Omega = (\alpha + \beta)\pr \Omega + \beta \pr \Omega^\perp$.
+\end{lemma}
+\begin{proof}
+    Using that $\mathbb F^{T_B} = \pr \Omega$ it is 
+    \begin{align*}
+    \frac{d-2p+1}{d(d^2-1)}\1 + \frac{2pd-d-1}{d(d^2-1)}\pr \Omega.
+    \end{align*}
+    Clearly, $\1$ is invariant under $U\otimes U^*$. For $\ket \Omega$ one has $(U\otimes U^*)\ket \Omega = \sum_{ijk}U_{ji}\overline U_{ik} \ket{jk} = \sum_{jk}\delta_{jk}\ket{jk}=\ket \Omega$ which shows that $W_p^{T_B}$ is isotropic. See the literature once again for the converse; the basic idea is to the Schur-Weyl duality from algebra.
+\end{proof}
+\begin{definition}
+    The fidelity $F$ of a state $\rho \in \m D(\C^d)$ is $
+        F(\rho) = \bra \Omega \rho \ket \Omega/d$.
+\end{definition}
+\begin{lemma}\label{prop:fidelity_isotropic}
+    An isotropic state of the form $\rho = \gamma \pr \Omega + \delta \pr \Omega ^\perp$ has fidelity $F\coloneqq F(\rho) = \gamma d $ so that \begin{align*}
+        \rho = \frac{F}{d}\pr \Omega + \frac{1-F}{d^2}\pr \Omega^\perp =\frac{1-F}{d^2-1}\1+ \frac{Fd^2-1}{d(d^2-1)}\pr \Omega 
+    \end{align*}
+\end{lemma}
+\begin{proof}
+    Straightforward.
+\end{proof}
+\begin{lemma}[Eigenvalues of Werner states]
+    Isotropic states $\rho = \alpha \1+\beta \mathbb F$ have eigenvalues $\alpha \pm \beta$ so that Werner states 
+    \begin{align*}
+        \frac{1-F}{d^2-1}\1+\frac{Fd^2-1}{d^2-1}\mathbb F
+    \end{align*}
+    have smallest eigenvalue $\lambda_\text{min} = (1-Fd)/(d(d-1))$. Hence, isotropic states are PPT if and only if $F\leq 1/d$.
+\end{lemma}
+
+\begin{definition}[Isotropic curling \cite{horodecki1999general}]
+    The isotropic curling operator is defined as $\m T(\rho)\coloneqq \int_{\m U(d)} (U\otimes \overline U)\rho (U \otimes \overline U)^*\dd U$.
+\end{definition}
+\begin{lemma}
+    \begin{enumerate}
+        \item For all states $\rho \in \m D(\hi)$ $\m T(\rho)$ is isotropic and $\m T$ preserves the fidelity: $F(\rho) = F(\m T(\rho))$
+        \item $\m T$ preserves separability
+    \end{enumerate}
+\end{lemma}
+\begin{proof}
+i) By construction, $\mathcal{T}$ outputs an isotropic state, since the Haar measure is translation-invariant. Because of $(U^* \otimes U^T)\ket{\Omega} = \ket{\Omega}$ for all unitaries $U$, the fidelity is preserved under the integral:
+\begin{align*}
+    F(\mathcal{T}(\rho)) &= \bra{\Omega} \mathcal{T}(\rho) \ket{\Omega} = \int \bra{\Omega} (U \otimes \bar{U}) \rho (U^* \otimes U^T) \ket{\Omega} dU \\
+    &= \int \bra{\Omega} \rho \ket{\Omega} dU = F(\rho).
+\end{align*}
+ii) Let $\rho = \sum_k p_k \sigma_k \otimes \tau_k$ be an arbitrary separable state. The action of local unitaries yields $(U \sigma_k U^*) \otimes (\bar{U} \tau_k U^T)$, which is strictly separable. Because $\mathcal{T}(\rho)$ is an integral (a continuous convex combination) over these separable states, the map $\mathcal{T}$ inherently preserves separability.
+\end{proof}
+\begin{lemma}
+    Let $\rho_\text{iso}(F)$ be an isotropic state with fidelity $F$, then for all $p \in [0,1]$ one has  
+    \begin{align*}
+        p\rho_\textbf{iso}(F)+(1-p)\rho_\text{iso}(F') = \rho_\text{iso}(pF+(1-p)F')
+    \end{align*}
+\end{lemma}
+\begin{proof}
+    Straightforward by using lemma \ref{prop:fidelity_isotropic}.
+\end{proof}
+\begin{prop}
+    Let $\rho_\text{iso} \in \m D(\hi)$ be an isotropic state, then 
+    \begin{align*}
+        \rho_\text{iso} \text{ separable }\Leftrightarrow \rho_\text{iso}^{T_B}\geq 0 \Leftrightarrow F(\rho_\text{iso})\leq \frac{1}{d}
+    \end{align*}
+\end{prop}
+\begin{proof}
+$\rho_{\text{iso}} \text{ separable} \Rightarrow \rho_{\text{iso}}^{T_B} \ge 0$ is trivial. For the equivalence $\rho_{\text{iso}}^{T_B} \ge 0 \iff F(\rho_{\text{iso}}) \le \frac{1}{d}$, evaluate the spectrum of the partial transpose. The smallest eigenvalue of $\rho_{\text{iso}}^{T_B}$ is strictly $\lambda_{\min} = \frac{1 - Fd}{d(d-1)}$. Thus, $\rho_{\text{iso}}^{T_B} \ge 0$ is mathematically equivalent to $1 - Fd \ge 0$, which evaluates to $F \le \frac{1}{d}$. Finally, to prove $F \le \frac{1}{d} \implies \rho_{\text{iso}} \text{ separable}$, consider the trivially separable state $\sigma = \frac{1}{d} \1 \otimes \ket{0}\bra{0}$, which yields a fidelity $F(\sigma) = \frac{1}{d}$. By Lemma 3.0.5, its twirled version $\mathcal{T}(\sigma) = \rho_{\text{iso}}(1/d)$ strictly remains separable. Likewise, twirling the separable state $\sigma' = \frac{1}{d-1} (\1 - \ket{0}\bra{0}) \otimes \ket{0}\bra{0}$ yields the separable boundary state $\rho_{\text{iso}}(0)$. By the convexity established in Lemma 3.0.6, any isotropic state $\rho_{\text{iso}}(F)$ with $F \in [0, 1/d]$ is a convex combination of separable states and is therefore structurally separable.
+\end{proof}
+
